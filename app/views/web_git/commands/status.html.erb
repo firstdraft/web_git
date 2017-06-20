@@ -1,0 +1,246 @@
+<div class="row mb-4">
+  <div class="col">
+    <div class="card">
+      <h1 class="card-header">
+        <% if @diff_html.present? %>
+          On branch <code><%= @current_branch %></code>
+        <% else %>
+          <code>git status</code>
+        <% end %>
+      </h1>
+
+      <div class="card-block">
+        
+        <% unless @status.include?("nothing to commit, working tree clean") %>
+          <p class="h4 mb-3 text-center">
+            You have changes
+          </p>
+
+          <% if @status.include?("untracked files") %>
+            <pre>
+              <%= simple_format @status.
+                    gsub("(use \"git add <file>...\" to include in what will be committed)\n\n", "").
+                    gsub("(use \"git add\" to track)\n", "")%>
+            </pre>
+          <% end %>
+
+          <% if @diff_html.present? %>
+            <iframe srcdoc="<%= @diff_html %>" width="100%" height="400" class="mb-3">
+            </iframe>
+          <% end %>
+
+          <p class="h4 mb-3 text-center">
+            What do you want to do?
+          </p>
+
+          <div class="row">
+            <div class="col">
+              <div class="card">
+                <div class="card-header h6">
+                  Commit your changes to the current branch
+                </div>
+
+                <div class="card-block">
+
+                  <%= form_tag commits_url do %>
+                    <div class="form-group">
+                      <%= label_tag :title %>
+                      <%= text_field_tag :title, nil, placeholder: "Enter a title for your commit (required)...", class: "form-control", required: true, autofocus: true %>
+                    </div>
+
+                    <div class="form-group">
+                      <%= label_tag :description %>
+                      <%= text_area_tag :description, nil, placeholder: "Enter a longer description of your changes (optional)...", class: "form-control" %>
+                    </div>
+
+                    <%= button_tag class: "btn btn-primary btn-block", data: { toggle: "tooltip", html: true }, title: "<code>git add -A; git commit</code>" do %>
+                      <%= octicon "git-commit", class: "mr-1" %>
+
+                      Commit to <%= @current_branch %>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="row mb-2">
+                <div class="col">
+                  <div class="card">
+                    <div class="card-header h6">
+                      Switch to a new branch
+                    </div>
+
+                    <div class="card-block">
+                      <%= form_tag branch_url, class: "full-width mb-2" do %>
+                        <div class="form-group">
+                          <%= label_tag :name, nil, class: "sr-only" %>
+                          <%= text_field_tag :name, nil, placeholder: "Enter a name for the branch to create...", class: "form-control" %>
+                        </div>
+                        <%= button_tag class: "btn btn-success btn-block", data: { toggle: "tooltip", html: true }, title: "<code>git checkout -b [NEW BRANCH NAME]</code>" do %>
+
+                          <%= octicon "git-branch", class: "mr-1" %>
+
+                          Create a new branch
+                        <% end %>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <div class="card">
+                    <div class="card-header h6">
+                      Discard your changes
+                    </div>
+
+                    <div class="card-block">
+                      <%= button_to commits_stash_url, class: "btn btn-danger btn-block", method: :post, data: { confirm: "Are you sure you want to discard these changes?", toggle: "tooltip", html: true }, title: "<code>git add -A; git stash</code>" do %>
+                        <%= octicon "trashcan", class: "mr-1" %>
+
+                        Discard all changes
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <% else %>
+
+          <div class="row">
+            <div class="col">
+              <pre>
+                <%= simple_format @status %>
+              </pre>
+
+              <%= link_to commits_push_url, class: "btn btn-primary btn-block mb-4", data: { toggle: "tooltip", html: true }, title: "<code>git push</code>" do %>
+                <%= octicon "repo-push", class: "mr-1" %>
+
+                Push to GitHub
+              <% end %>
+
+              <% unless @current_branch == "master" %>
+                <%= link_to "https://github.com/firstdraft/git_client_poc/compare/#{@current_branch}?expand=1", class: "btn btn-primary btn-block mb-4", target: "_blank" do %>
+                  <%= octicon "git-pull-request", class: "mr-1" %>
+
+                  Open a pull request into master
+                <% end %>
+              <% end %>
+
+              <%= link_to commits_pull_url, class: "btn btn-primary btn-block mb-4", data: { toggle: "tooltip", html: true }, title: "<code>git pull</code>" do %>
+                <%= octicon "repo-pull", class: "mr-1" %>
+
+                Pull from GitHub
+              <% end %>
+
+              <p>
+                The last thing you did was:
+              </p>
+
+              <blockquote class="blockquote">
+                <%= @last_commit_message %>
+              </blockquote>
+
+              <%= link_to "#latest_diff_html", class: "btn btn-secondary btn-block mb-4", data: { toggle: "collapse" }, title: "git show" do %>
+                <%= octicon "eye", class: "mr-1" %>
+
+                Show last commit
+              <% end %>
+
+              <div id="latest_diff_html" class="collapse">
+                <iframe srcdoc="<%= @last_diff_html %>" width="100%" height="400" class="mb-3">
+                </iframe>
+              </div>
+            </div>
+
+            <div class="col">
+              <ul class="list-group">
+                <li class="list-group-item list-group-item-success">
+                  New Branch
+                </li>
+
+                <li class="list-group-item">
+                  <%= form_tag branch_url, class: "full-width mb-2" do %>
+                    <div class="form-group">
+                      <%= label_tag :name, "Go ahead, experiment!" %>
+                      <%= text_field_tag :name, nil, placeholder: "Enter a name for the new branch...", class: "form-control" %>
+                    </div>
+                    <%= button_tag class: "btn btn-success btn-block", data: { toggle: "tooltip", html: true }, title: "<code>git checkout -b [BRANCH NAME]</code>" do %>
+                      <%= octicon "git-branch", class: "mr-1" %>
+
+                      Create branch
+                    <% end %>
+                  <% end %>
+                </li>
+
+                <li class="list-group-item list-group-item-info">
+                  Existing branches
+                </li>
+
+                <% @branches.each do |branch| %>
+                  <li class="list-group-item  justify-content-between">
+                    <%= branch %>
+
+                    <div class="btn-group">
+                      <%= link_to octicon("git-compare"), branch_url(name: branch), class: "btn btn-primary btn-sm", title: "Switch to branch<br><code>git checkout #{branch}</code>", data: { toggle: "tooltip", html: true } %>
+
+                      <%= link_to octicon("trashcan"), branch_url(name: branch), method: :delete, class: "btn btn-warning btn-sm", data: { toggle: "tooltip", confirm: "Are you sure you want to delete #{branch}?" }, title: "Delete branch #{branch}" %>
+                    </div>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col">
+    <div class="card">
+      <h2 class="card-header">
+        History
+      </h2>
+
+      <div class="card-block">
+        <p class="lead">Do you want to jump back in time and go down a different path?</p>
+        <%= form_tag branch_url do %>
+          <div class="form-group">
+            <%= label_tag :commit_hash, "Branch off of" %>
+            <%= text_field_tag :commit_hash, nil, placeholder: "Enter the sequence of digits preceding the commit (it's \"hash\") that you want to branch off of...", class: "form-control" %>
+          </div>
+
+          <div class="form-group">
+            <%= label_tag :name, "Branch name" %>
+            <%= text_field_tag :name, nil, placeholder: "Enter a name for the new branch...", class: "form-control" %>
+          </div>
+
+          <% if @diff_html.present? %>
+            <%= button_tag "Can't go back in time while you have pending changes. Commit or discard them first.", class: "btn btn-primary btn-block", disabled: true %>
+          <% else %>
+            <%= button_tag class: "btn btn-success btn-block", data: { toggle: "tooltip", html: true }, title: "<code>git checkout [OLD HASH]; git checkout -b [NEW BRANCH NAME]</code>" do %>
+              <%= octicon "git-branch", class: "mr-1" %>
+
+              Create a new branch off of previous commit
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <pre>
+          <%= simple_format @log %>
+        </pre>
+
+        <% if @log_html.present? %>
+          <iframe srcdoc="<%= @log_html %>" width="100%" height="800" class="mb-3">
+          </iframe>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
