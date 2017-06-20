@@ -16,8 +16,8 @@ Juwelier::Tasks.new do |gem|
   gem.name = "web_git"
   gem.homepage = "http://github.com/firstdraft/web_git"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{An in-browser Git GUI for your Rails project}
+  gem.description = %Q{WebGit is a Rails Engine that provides an in-browser visual interface to a simple but effective Git workflow. For educational purposes.}
   gem.email = "raghu@firstdraft.com"
   gem.authors = ["Raghu Betina"]
 

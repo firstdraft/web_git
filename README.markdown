@@ -1,26 +1,29 @@
-web_git===================
+# WebGit
 
-Description goes here.
+An in-browser Git GUI for your Rails project.
 
-Contributing to web_git
-------------------------------------------
+WebGit is a Rails Engine that provides an in-browser visual interface to a simple but effective Git workflow. For educational purposes.
 
--   Check out the latest master to make sure the feature hasn't been
-    implemented or the bug hasn't been fixed yet.
--   Check out the issue tracker to make sure someone already hasn't
-    requested it and/or contributed it.
--   Fork the project.
--   Start a feature/bugfix branch.
--   Commit and push until you are happy with your contribution.
--   Make sure to add tests for it. This is important so I don't break it
-    in a future version unintentionally.
--   Please try not to mess with the Rakefile, version, or history. If
-    you want to have your own version, or is otherwise necessary, that
-    is fine, but please isolate to its own commit so I can cherry-pick
-    around it.
+## Installation
 
-Copyright
----------
+Add this line to your application's Gemfile:
 
-Copyright (c) 2017 Raghu Betina. See
-LICENSE.txt for further details.
+```ruby
+gem "web_git"
+```
+
+And then execute:
+```bash
+$ bundle
+```
+
+## Usage
+
+In `config/routes.rb`,
+
+```ruby
+mount WebGit::Engine, at: "/rails/git"
+```
+
+## License
+The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
