@@ -9,7 +9,7 @@ WebGit is a Rails Engine that provides an in-browser visual interface to a simpl
 Add this line to your application's Gemfile:
 
 ```ruby
-gem "web_git"
+gem "web_git", git: "https://github.com/firstdraft/web_git/tree/porting-over"
 ```
 
 And then execute:
