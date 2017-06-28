@@ -124,7 +124,7 @@
               <% end %>
 
               <% unless @current_branch == "master" %>
-                <%= link_to "https://github.com/firstdraft/git_client_poc/compare/#{@current_branch}?expand=1", class: "btn btn-primary btn-block mb-4", target: "_blank" do %>
+                <%= link_to "https://github.com/#{@user}/#{@repo}/compare/master...#{@user}:#{@current_branch}?expand=1", class: "btn btn-primary btn-block mb-4", target: "_blank" do %>
                   <%= octicon "git-pull-request", class: "mr-1" %>
 
                   Open a pull request into master
