@@ -1,0 +1,12 @@
+@import "bootstrap";
+
+@import "octicons";
+
+body {
+  padding-top: 2rem;
+}
+
+.full-width {
+  // TODO: This should not be necessary. Seems like a bug in Bootstrap 4 with forms within list-group-items.
+  width: 100%;
+}

@@ -27,7 +27,26 @@ Gem::Specification.new do |s|
     "README.markdown",
     "Rakefile",
     "VERSION",
-    "lib/web_git.rb"
+    "app/assets/config/web_git_manifest.js",
+    "app/assets/images/web_git/.keep",
+    "app/assets/javascripts/web_git/application.js",
+    "app/assets/stylesheets/web_git/application.scss",
+    "app/assets/stylesheets/web_git/octicons.css",
+    "app/controllers/web_git/application_controller.rb",
+    "app/controllers/web_git/branches_controller.rb",
+    "app/controllers/web_git/commands_controller.rb",
+    "app/controllers/web_git/commits_controller.rb",
+    "app/helpers/web_git/application_helper.rb",
+    "app/jobs/web_git/application_job.rb",
+    "app/mailers/web_git/application_mailer.rb",
+    "app/models/web_git/application_record.rb",
+    "app/views/layouts/web_git/application.html.erb",
+    "app/views/web_git/commands/status.html.erb",
+    "config/routes.rb",
+    "lib/tasks/web_git_tasks.rake",
+    "lib/web_git.rb",
+    "lib/web_git/engine.rb",
+    "web_git.gemspec"
   ]
   s.homepage = "http://github.com/firstdraft/web_git".freeze
   s.licenses = ["MIT".freeze]
@@ -38,42 +57,54 @@ Gem::Specification.new do |s|
     s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_development_dependency(%q<rspec>.freeze, ["~> 3.5.0"])
-      s.add_development_dependency(%q<rdoc>.freeze, ["~> 3.12"])
-      s.add_development_dependency(%q<bundler>.freeze, ["~> 1.0"])
-      s.add_development_dependency(%q<juwelier>.freeze, ["~> 2.1.0"])
-      s.add_development_dependency(%q<simplecov>.freeze, [">= 0"])
-      s.add_development_dependency(%q<pry>.freeze, ["~> 0"])
-      s.add_development_dependency(%q<pry-byebug>.freeze, ["~> 3"])
-      s.add_development_dependency(%q<pry-doc>.freeze, ["~> 0"])
-      s.add_development_dependency(%q<pry-remote>.freeze, ["~> 0"])
-      s.add_development_dependency(%q<pry-rescue>.freeze, ["~> 1"])
-      s.add_development_dependency(%q<pry-stack_explorer>.freeze, ["~> 0"])
+      s.add_runtime_dependency(%q<tzinfo-data>, [">= 0"])
+      s.add_runtime_dependency(%q<bootstrap>, ["~> 4.0.0.alpha6"])
+      s.add_runtime_dependency(%q<tether-rails>, [">= 0"])
+      s.add_runtime_dependency(%q<octicons_helper>, [">= 0"])
+      s.add_development_dependency(%q<rspec>, ["~> 3.5.0"])
+      s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
+      s.add_development_dependency(%q<bundler>, ["~> 1.0"])
+      s.add_development_dependency(%q<juwelier>, ["~> 2.1.0"])
+      s.add_development_dependency(%q<simplecov>, [">= 0"])
+      s.add_development_dependency(%q<pry>, ["~> 0"])
+      s.add_development_dependency(%q<pry-byebug>, ["~> 3"])
+      s.add_development_dependency(%q<pry-doc>, ["~> 0"])
+      s.add_development_dependency(%q<pry-remote>, ["~> 0"])
+      s.add_development_dependency(%q<pry-rescue>, ["~> 1"])
+      s.add_development_dependency(%q<pry-stack_explorer>, ["~> 0"])
     else
-      s.add_dependency(%q<rspec>.freeze, ["~> 3.5.0"])
-      s.add_dependency(%q<rdoc>.freeze, ["~> 3.12"])
-      s.add_dependency(%q<bundler>.freeze, ["~> 1.0"])
-      s.add_dependency(%q<juwelier>.freeze, ["~> 2.1.0"])
-      s.add_dependency(%q<simplecov>.freeze, [">= 0"])
-      s.add_dependency(%q<pry>.freeze, ["~> 0"])
-      s.add_dependency(%q<pry-byebug>.freeze, ["~> 3"])
-      s.add_dependency(%q<pry-doc>.freeze, ["~> 0"])
-      s.add_dependency(%q<pry-remote>.freeze, ["~> 0"])
-      s.add_dependency(%q<pry-rescue>.freeze, ["~> 1"])
-      s.add_dependency(%q<pry-stack_explorer>.freeze, ["~> 0"])
+      s.add_dependency(%q<tzinfo-data>, [">= 0"])
+      s.add_dependency(%q<bootstrap>, ["~> 4.0.0.alpha6"])
+      s.add_dependency(%q<tether-rails>, [">= 0"])
+      s.add_dependency(%q<octicons_helper>, [">= 0"])
+      s.add_dependency(%q<rspec>, ["~> 3.5.0"])
+      s.add_dependency(%q<rdoc>, ["~> 3.12"])
+      s.add_dependency(%q<bundler>, ["~> 1.0"])
+      s.add_dependency(%q<juwelier>, ["~> 2.1.0"])
+      s.add_dependency(%q<simplecov>, [">= 0"])
+      s.add_dependency(%q<pry>, ["~> 0"])
+      s.add_dependency(%q<pry-byebug>, ["~> 3"])
+      s.add_dependency(%q<pry-doc>, ["~> 0"])
+      s.add_dependency(%q<pry-remote>, ["~> 0"])
+      s.add_dependency(%q<pry-rescue>, ["~> 1"])
+      s.add_dependency(%q<pry-stack_explorer>, ["~> 0"])
     end
   else
-    s.add_dependency(%q<rspec>.freeze, ["~> 3.5.0"])
-    s.add_dependency(%q<rdoc>.freeze, ["~> 3.12"])
-    s.add_dependency(%q<bundler>.freeze, ["~> 1.0"])
-    s.add_dependency(%q<juwelier>.freeze, ["~> 2.1.0"])
-    s.add_dependency(%q<simplecov>.freeze, [">= 0"])
-    s.add_dependency(%q<pry>.freeze, ["~> 0"])
-    s.add_dependency(%q<pry-byebug>.freeze, ["~> 3"])
-    s.add_dependency(%q<pry-doc>.freeze, ["~> 0"])
-    s.add_dependency(%q<pry-remote>.freeze, ["~> 0"])
-    s.add_dependency(%q<pry-rescue>.freeze, ["~> 1"])
-    s.add_dependency(%q<pry-stack_explorer>.freeze, ["~> 0"])
+    s.add_dependency(%q<tzinfo-data>, [">= 0"])
+    s.add_dependency(%q<bootstrap>, ["~> 4.0.0.alpha6"])
+    s.add_dependency(%q<tether-rails>, [">= 0"])
+    s.add_dependency(%q<octicons_helper>, [">= 0"])
+    s.add_dependency(%q<rspec>, ["~> 3.5.0"])
+    s.add_dependency(%q<rdoc>, ["~> 3.12"])
+    s.add_dependency(%q<bundler>, ["~> 1.0"])
+    s.add_dependency(%q<juwelier>, ["~> 2.1.0"])
+    s.add_dependency(%q<simplecov>, [">= 0"])
+    s.add_dependency(%q<pry>, ["~> 0"])
+    s.add_dependency(%q<pry-byebug>, ["~> 3"])
+    s.add_dependency(%q<pry-doc>, ["~> 0"])
+    s.add_dependency(%q<pry-remote>, ["~> 0"])
+    s.add_dependency(%q<pry-rescue>, ["~> 1"])
+    s.add_dependency(%q<pry-stack_explorer>, ["~> 0"])
   end
 end
 
