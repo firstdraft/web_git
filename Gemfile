@@ -30,4 +30,4 @@ gem "octicons_helper"
 
 gem 'turbolinks', '~> 5'
 
-gem 'jquery-rails', '4.3.1
+gem 'jquery-rails', '4.3.1'
