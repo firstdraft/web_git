@@ -27,8 +27,10 @@ module WebGit
     end
 
     def pull
+      current_branch = `git symbolic-ref --short HEAD`.chomp
+
       Dir.chdir(Rails.root) do
-        @result = `git pull`
+        @result = `git pull origin #{current_branch}`
       end
 
       redirect_to root_url, notice: "Pulled from GitHub."
