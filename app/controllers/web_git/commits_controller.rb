@@ -5,7 +5,7 @@ module WebGit
         `git add -A`
         `git commit -m "#{params[:title]}" -m "#{params[:description]}"`
       end
-      
+
       redirect_to root_url, notice: "Changed committed."
     end
 
@@ -20,7 +20,7 @@ module WebGit
 
     def push
       Dir.chdir(Rails.root) do
-        @result = `git push`
+        @result = `git push -f`
       end
 
       redirect_to root_url, notice: "Pushed to GitHub."
