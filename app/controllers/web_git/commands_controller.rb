@@ -33,9 +33,11 @@ module WebGit
 
         # @log = `git log --branches --remotes --tags --graph --oneline --decorate --pretty=format:"#%h %d %s - %cr"`
         shell_script_path = WebGit::Engine.root.to_s + "/ansi2html.sh"
-        
+
         @log_html = `git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --branches --remotes --tags | sh #{shell_script_path} --bg=dark`
       end
+
+      render layout: "web_git/application"
     end
   end
 end
