@@ -6,12 +6,16 @@ module WebGit
 
         @current_branch = `git symbolic-ref --short HEAD`.chomp
 
+        @origin_url = nil
         origin = `git config --get remote.origin.url`
-        user_repo = origin.split(":").last.chomp(".git\n")
-        @user, @repo = user_repo.split("/")
 
-        # TODO: if origin.start_with?("http")
-        @origin_url = "https://github.com/" + origin.split(":").last.chomp(".git\n")
+        if origin.present?
+          user_repo = origin.split(":").last.chomp(".git\n")
+          @user, @repo = user_repo.split("/")
+
+          # TODO: if origin.start_with?("http")
+          @origin_url = "https://github.com/" + origin.split(":").last.chomp(".git\n")
+        end
 
         diff = `git diff`
 
