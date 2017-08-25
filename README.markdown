@@ -23,6 +23,16 @@ And then execute:
 $ bundle
 ```
 
+## Usage
+
+In `config/routes.rb`,
+
+```ruby
+mount WebGit::Engine, at: "/rails/git"
+```
+
+or choose your own address to access the visual Git client; then navigate to it in a browser.
+
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
