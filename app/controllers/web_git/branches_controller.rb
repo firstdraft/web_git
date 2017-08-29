@@ -1,5 +1,7 @@
 module WebGit
-  class BranchesController < ApplicationController
+  class BranchesController < ::ApplicationController
+    skip_before_action :authenticate_user!, raise: false
+    
     def create
       Dir.chdir(Rails.root) do
         if params[:commit_hash].present?

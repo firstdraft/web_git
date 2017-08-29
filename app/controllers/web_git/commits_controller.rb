@@ -1,5 +1,7 @@
 module WebGit
-  class CommitsController < ApplicationController
+  class CommitsController < ::ApplicationController
+    skip_before_action :authenticate_user!, raise: false
+    
     def create
       Dir.chdir(Rails.root) do
         `git add -A`

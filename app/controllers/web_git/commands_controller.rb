@@ -1,5 +1,7 @@
 module WebGit
-  class CommandsController < ApplicationController
+  class CommandsController < ::ApplicationController
+    skip_before_action :authenticate_user!, raise: false
+
     def status
       Dir.chdir(Rails.root) do
         @status = `git status`
