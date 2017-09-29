@@ -9,7 +9,7 @@
         <% end %>
       </h1>
 
-      <div class="card-block">
+      <div class="card-body">
         <%# if false %>
         <% unless @status.include?("nothing to commit, working tree clean") %>
           <p class="h4 mb-3 text-center">
@@ -40,7 +40,7 @@
                   Commit your changes to the current branch
                 </div>
 
-                <div class="card-block">
+                <div class="card-body">
 
                   <%= form_tag commits_url do %>
                     <div class="form-group">
@@ -71,7 +71,7 @@
                       Switch to a new branch
                     </div>
 
-                    <div class="card-block">
+                    <div class="card-body">
                       <%= form_tag branch_url, class: "full-width mb-2" do %>
                         <div class="form-group">
                           <%= label_tag :name, nil, class: "sr-only" %>
@@ -96,7 +96,7 @@
                       Discard your changes
                     </div>
 
-                    <div class="card-block">
+                    <div class="card-body">
                       <%= button_to commits_stash_url, class: "btn btn-danger btn-block", method: :post, data: { confirm: "Are you sure you want to discard these changes?", toggle: "tooltip", html: true }, title: "<code>git add -A; git stash</code>" do %>
                         <%= octicon "trashcan", class: "mr-1" %>
 
@@ -208,7 +208,7 @@
         History
       </h2>
 
-      <div class="card-block">
+      <div class="card-body">
         <p class="lead">Do you want to jump back in time and go down a different path?</p>
         <%= form_tag branch_url do %>
           <div class="form-group">
