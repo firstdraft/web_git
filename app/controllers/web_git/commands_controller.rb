@@ -12,11 +12,12 @@ module WebGit
         origin = `git config --get remote.origin.url`
 
         if origin.present?
-          user_repo = origin.split(":").last.chomp(".git\n")
-          @user, @repo = user_repo.split("/")
+          url = origin.chomp.gsub(".git", "")
+          url_obj = GitCloneUrl.parse(url)
+          array = url_obj.path.gsub(/\A\//, '').split("/")
+          @user, @repo = array[0], array[1]
 
-          # TODO: if origin.start_with?("http")
-          @origin_url = "https://github.com/" + origin.split(":").last.chomp(".git\n")
+          @origin_url = "https://github.com/#{@user}/#{@repo}.git"
         end
 
         diff = `git diff`

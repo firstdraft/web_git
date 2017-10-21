@@ -4,6 +4,7 @@ require "octicons_helper"
 require "tether-rails"
 require "bootstrap"
 require "turbolinks"
+require "git_clone_url"
 
 module WebGit
   # Your code goes here...

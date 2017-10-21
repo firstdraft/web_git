@@ -31,3 +31,5 @@ gem "octicons_helper"
 gem "turbolinks", "~> 5"
 
 gem "jquery-rails"
+
+gem "git_clone_url"
