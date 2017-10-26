@@ -56,7 +56,6 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<tzinfo-data>, [">= 0"])
-      s.add_runtime_dependency(%q<bootstrap>, ["~> 4.0.0.beta"])
       s.add_runtime_dependency(%q<tether-rails>, [">= 0"])
       s.add_runtime_dependency(%q<octicons_helper>, [">= 0"])
       s.add_runtime_dependency(%q<turbolinks>, ["~> 5"])
@@ -75,7 +74,6 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<pry-stack_explorer>, ["~> 0"])
     else
       s.add_dependency(%q<tzinfo-data>, [">= 0"])
-      s.add_dependency(%q<bootstrap>, ["~> 4.0.0.beta"])
       s.add_dependency(%q<tether-rails>, [">= 0"])
       s.add_dependency(%q<octicons_helper>, [">= 0"])
       s.add_dependency(%q<turbolinks>, ["~> 5"])
@@ -95,7 +93,6 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency(%q<tzinfo-data>, [">= 0"])
-    s.add_dependency(%q<bootstrap>, ["~> 4.0.0.beta"])
     s.add_dependency(%q<tether-rails>, [">= 0"])
     s.add_dependency(%q<octicons_helper>, [">= 0"])
     s.add_dependency(%q<turbolinks>, ["~> 5"])
