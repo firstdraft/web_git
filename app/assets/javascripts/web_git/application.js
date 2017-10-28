@@ -13,6 +13,8 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
+//= require web_git/popper.min
+//= require web_git/bootstrap.min
 //= require_tree .
 
 $(function() {
