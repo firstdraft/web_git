@@ -1,7 +1,7 @@
 module WebGit
   class CommitsController < ::ApplicationController
     skip_before_action :authenticate_user!, raise: false
-    
+
     def create
       Dir.chdir(Rails.root) do
         `git add -A`
@@ -34,6 +34,11 @@ module WebGit
       Dir.chdir(Rails.root) do
         @result = `git pull origin #{current_branch}`
       end
+
+      `git fetch --prune`
+      `git fetch --all`
+
+      %x(for branch in $(git branch --all | grep '^\s*remotes' | egrep --invert-match '(:?HEAD|master)$'); do git branch --track "${branch##*/}" "$branch"; done)
 
       redirect_to root_url, notice: "Pulled from GitHub."
     end
