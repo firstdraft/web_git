@@ -16,7 +16,7 @@
             You have changes
           </p>
 
-          <% if @status.include?("untracked files") %>
+          <% if @status.include?("Untracked files") %>
             <pre>
               <%= simple_format @status.
                     gsub("(use \"git add <file>...\" to include in what will be committed)\n\n", "").
