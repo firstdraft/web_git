@@ -25,7 +25,8 @@
           <% end %>
 
           <% if @diff_html.present? %>
-            <%= @diff_html.html_safe %>
+            <iframe srcdoc="<%= @diff_html %>" width="100%" height="400" class="mb-3">
+            </iframe>
           <% end %>
 
           <p class="h4 mb-3 text-center">
