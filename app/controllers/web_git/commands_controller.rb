@@ -4,7 +4,7 @@ module WebGit
 
     def status
       Dir.chdir(Rails.root) do
-        @status = `git status`
+        logger.debug @status = `git status`
 
         @current_branch = `git symbolic-ref --short HEAD`.chomp
 
@@ -40,11 +40,11 @@ module WebGit
 
         # @log = `git log --branches --remotes --tags --graph --oneline --decorate --pretty=format:"#%h %d %s - %cr"`
         shell_script_path = WebGit::Engine.root.to_s + "/ansi2html.sh"
-
-        @log_html = `git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --branches --remotes --tags | sh #{shell_script_path} --bg=dark`
+        logger.debug @log_html = `git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n%C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --branches --remotes --tags | sh #{shell_script_path} --bg=dark`
       end
-
-      render layout: "web_git/application"
+      # render layout: "web_git/application"
+      # render "web_git/commands/hello.html.erb"
+      render "web_git/commands/status.html.erb", layout: "web_git/application"
     end
   end
 end
