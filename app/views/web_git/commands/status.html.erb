@@ -117,7 +117,7 @@
                 <%= simple_format @status %>
               </pre>
 
-              <%= link_to commits_push_url, class: "btn btn-primary btn-block mb-4", data: { toggle: "tooltip", html: true }, title: "<code>git push</code>" do %>
+              <%= button_to commits_push_url, disabled: true, class: "btn btn-primary btn-block mb-4", data: { toggle: "tooltip", html: true }, title: "<code>git push</code>" do %>
                 <%= octicon "repo-push", class: "mr-1" %>
 
                 Push to GitHub
@@ -131,7 +131,7 @@
                 <% end %>
               <% end %>
 
-              <%= link_to commits_pull_url, class: "btn btn-primary btn-block mb-4", data: { toggle: "tooltip", html: true }, title: "<code>git pull</code>" do %>
+              <%= button_to commits_pull_url, disabled: true, class: "btn btn-primary btn-block mb-4", data: { toggle: "tooltip", html: true }, title: "<code>git pull</code>" do %>
                 <%= octicon "repo-pull", class: "mr-1" %>
 
                 Pull from GitHub
