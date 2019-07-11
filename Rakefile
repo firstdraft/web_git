@@ -19,7 +19,7 @@ Juwelier::Tasks.new do |gem|
   gem.summary = %Q{An in-browser Git GUI for your Rails project}
   gem.description = %Q{WebGit is a Rails Engine that provides an in-browser visual interface to a simple but effective Git workflow. For educational purposes.}
   gem.email = "raghu@firstdraft.com"
-  gem.authors = ["Raghu Betina"]
+  gem.authors = ["Raghu Betina", "Jelani Woods"]
 
   # dependencies defined in Gemfile
 end

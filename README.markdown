@@ -6,10 +6,6 @@ WebGit is a Rails Engine that provides an in-browser visual interface to a simpl
 
 ## Installation
 
-You need to have the `diff2html-cli` command available on your system. You can install it with:
-
-```
-npm install -g diff2html-cli
 ```
 
 Add this line to your application's Gemfile:
