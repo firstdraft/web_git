@@ -32,3 +32,5 @@ gem "turbolinks", "~> 5"
 gem "jquery-rails"
 
 gem "git_clone_url"
+
+gem "yard", ">= 0.9.20"
