@@ -1,11 +1,15 @@
 module WebGit
   class CommitsController < ::ApplicationController
+    require 'git'
     skip_before_action :authenticate_user!, raise: false
 
     def create
       Dir.chdir(Rails.root) do
-        `git add -A`
-        `git commit -m "#{params[:title]}" -m "#{params[:description]}"`
+        g = Git.open(working_dir, :log => Logger.new(STDOUT))
+        g.add(:all=>true) 
+        # `git add -A`
+        # `git commit -m "#{params[:title]}" -m "#{params[:description]}"`
+        g.commit_all("#{params[:title]}\n#{params[:description]}")
       end
 
       redirect_to root_url, notice: "Changed committed."
@@ -13,7 +17,9 @@ module WebGit
 
     def stash
       Dir.chdir(Rails.root) do
-        `git add -A`
+        # `git add -A`
+        g = Git.open(working_dir, :log => Logger.new(STDOUT))
+        g.add(:all=>true) 
         `git stash`
       end
 

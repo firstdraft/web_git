@@ -1,5 +1,6 @@
 module WebGit
   class CommandsController < ::ApplicationController
+    require 'git'
     skip_before_action :authenticate_user!, raise: false
 
     def status
@@ -7,10 +8,12 @@ module WebGit
         
         unless Dir.exist?(".git")
           puts "Initialize a git repository"
-          `git init`
-          `git add -A`
+          Git.init
+          # `git add -A`
           puts "Make first commit"
-          `git commit -m "Starting point"`
+          g.config('user.name', 'Example User')
+          g.config('user.email', 'user@example.com')
+          # `git commit -m "Starting point"`
         end
         @status = `git status`
         @current_branch = `git symbolic-ref --short HEAD`.chomp
