@@ -8,9 +8,6 @@ module WebGit
         unless Dir.exist?(".git")
           puts "Initialize a git repository"
           `git init`
-          `git add -A`
-          puts "Make first commit"
-          `git commit -m "Starting point"`
         end
         @status = `git status`
         @current_branch = `git symbolic-ref --short HEAD`.chomp
