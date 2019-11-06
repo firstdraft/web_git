@@ -109,7 +109,7 @@
 
       def self.get_last_diff
         Dir.chdir(Rails.root) do
-          `git diff -M HEAD~1`
+          `git show`
         end
       end
 
