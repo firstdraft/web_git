@@ -5,6 +5,7 @@ WebGit::Engine.routes.draw do
   resources :commits, only: :create
   post "commits/stash"
   get "commits/push"
+  get "commits/set_upstream"
   get "commits/pull"
   get "commits/add"
 end

@@ -114,11 +114,19 @@
               <pre>
                 <%= simple_format @status %>
               </pre>
+              
+              <% if @current_branch != "master" %>
+                <%= button_to commits_set_upstream_url, method: "get", class: "btn btn-primary btn-block mb-4", data: { toggle: "tooltip", html: true }, title: "<code>git push -u origin #{@current_branch}</code>" do %>
+                  <%= octicon "repo-push", class: "mr-1" %>
 
-              <%= button_to commits_push_url, method: "get", class: "btn btn-primary btn-block mb-4", data: { toggle: "tooltip", html: true }, title: "<code>git push</code>" do %>
-                <%= octicon "repo-push", class: "mr-1" %>
+                  Push to GitHub
+                <% end %>
+              <% else %>
+                <%= button_to commits_push_url, method: "get", class: "btn btn-primary btn-block mb-4", data: { toggle: "tooltip", html: true }, title: "<code>git push</code>" do %>
+                  <%= octicon "repo-push", class: "mr-1" %>
 
-                Push to GitHub
+                  Push to GitHub
+                <% end %>
               <% end %>
 
               <% if @current_branch != "master" && @origin_url.present? %>

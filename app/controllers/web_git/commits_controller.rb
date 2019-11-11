@@ -28,6 +28,15 @@ module WebGit
       redirect_to root_url, notice: "Pushed to GitHub."
     end
 
+    def set_upstream
+      current_branch = `git symbolic-ref --short HEAD`.chomp
+      Dir.chdir(Rails.root) do
+        @result = `git push -u origin #{current_branch}`
+      end
+
+      redirect_to root_url, notice: "Pushed to GitHub."
+    end
+
     def pull
       current_branch = `git symbolic-ref --short HEAD`.chomp
 
