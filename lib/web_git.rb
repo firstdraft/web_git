@@ -1,6 +1,7 @@
 require "web_git/engine"
 require "web_git/diff"
 require "diffy"
+require "git"
 require "jquery-rails"
 require "octicons_helper"
 require "tether-rails"

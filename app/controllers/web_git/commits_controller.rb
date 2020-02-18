@@ -15,6 +15,7 @@ module WebGit
     def stash
       Dir.chdir(Rails.root) do
         `git add -A`
+        # g.add(:all=>true)  
         `git stash`
       end
 
