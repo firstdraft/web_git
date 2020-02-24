@@ -1,6 +1,7 @@
 module WebGit
   class CommitsController < ::ApplicationController
     skip_before_action :authenticate_user!, raise: false
+    skip_before_action :force_user_sign_in, raise: false
 
     def create
       Dir.chdir(Rails.root) do
