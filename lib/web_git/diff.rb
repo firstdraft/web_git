@@ -1,10 +1,11 @@
 
   require "diffy"
+  require "git"
   class Diff
 
     def initialize
       working_dir = Dir.pwd
-      @git = Git.open(working_dir)  
+      git = Git.open(working_dir)  
     end
 
     def self.get_diff
@@ -79,10 +80,9 @@
     end
 
     def self.get_last_commit_hash
-      # Dir.chdir(Rails.root) do
-        log = `git log -1 --oneline`
-        # log.split[0]
-      # end
+      working_dir = Dir.pwd
+      git = Git.open(working_dir)
+      git.log.first.sha.slice(0, 7)
     end
 
     def self.file_diffs(diff)
@@ -104,14 +104,13 @@
     end
 
     def self.get_file_names(commit)
-      # Dir.chdir(Rails.root) do
-        if commit.empty?
-          filenames = `git diff --name-only`
-        else
-          filenames = `git diff-tree --no-commit-id --name-only -r #{commit}`
-        end
-        filenames.split("\n")
-      # end
+      git = Git.open(Dir.pwd)
+      if commit.empty?
+        filenames = git.status.changed.keys
+      else
+        filenames = git.diff(commit, "HEAD").map(&:path)
+      end
+      filenames
     end
 
     def self.get_last_diff
