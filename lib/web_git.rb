@@ -71,7 +71,7 @@ module WebGit
       # TODO show where branches are on different remotes
       # (origin/master, origin/jw-non-sweet, origin/HEAD)
       # g.branches[:master].gcommit
-      
+
       logs.each do |commit|
         sha = commit.sha.slice(0..7)
         commit_date = commit.date
@@ -92,6 +92,9 @@ module WebGit
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
       g.add(:all => true)  
+      unless description.nil?
+        title += "\n#{description}"
+      end
       g.commit(title)
       redirect to("/status")
     end

@@ -3,11 +3,6 @@
   require "git"
   class Diff
 
-    def initialize
-      working_dir = Dir.pwd
-      git = Git.open(working_dir)  
-    end
-
     def self.get_diff
       # Dir.chdir(Rails.root) do
         `git diff`
