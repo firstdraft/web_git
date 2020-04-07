@@ -12,7 +12,7 @@ module WebGit
     require 'action_view/helpers'
     include ActionView::Helpers::DateHelper
 
-    get '/' do
+    get '/log' do
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
       logs = g.log
@@ -36,7 +36,7 @@ module WebGit
       # " * " + sha + " - " + commit_date + " (" + time_ago_in_words(commit_date) + ") " + "\n\t| " + commit.message 
     end
     
-    get "/status" do
+    get "/" do
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
       # Just need the file names
@@ -96,7 +96,7 @@ module WebGit
         title += "\n#{description}"
       end
       g.commit(title)
-      redirect to("/status")
+      redirect to("/")
     end
     
     get "/stash" do
@@ -105,7 +105,7 @@ module WebGit
       g.add(:all=>true)
       stash_count = Git::Stashes.new(g).count
       Git::Stash.new(g, "Stash #{stash_count}")
-      redirect to("/status")
+      redirect to("/")
     end
     
     post "/branch/checkout" do
@@ -120,7 +120,7 @@ module WebGit
         g.branch(name).checkout
         g.reset_hard(g.gcommit(commit))
       end
-      redirect to("/status")
+      redirect to("/")
     end
     
     # TODO make delete request somehow with the links
@@ -129,7 +129,7 @@ module WebGit
       g = Git.open(working_dir)
       name = params[:branch_name]
       g.branch(name).delete
-      redirect to("/status")
+      redirect to("/")
     end
 
     post "/push" do
@@ -142,14 +142,14 @@ module WebGit
       #   g.push remote
       # end
       g.push
-      redirect to("/status")
+      redirect to("/")
     end
 
     post "/pull" do
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
       g.pull
-      redirect to("/status")
+      redirect to("/")
     end
   end
 end
