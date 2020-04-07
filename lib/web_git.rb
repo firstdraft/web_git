@@ -58,7 +58,10 @@ module WebGit
       @status = `git status`
       @diff = g.diff
       @diff = Diff.diff_to_html(g.diff.to_s)
-      last_diff = g.diff(g.log[1], "HEAD").to_s + "\n"
+      last_diff = nil
+      if g.log.count > 1
+        last_diff = g.diff(g.log[1], "HEAD").to_s + "\n"
+      end
       # @last_diff_html = Diff.last_to_html(last_diff)
       @last_diff_html = last_diff
       @branches = g.branches.local.map(&:full)
