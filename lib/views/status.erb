@@ -62,7 +62,7 @@
                       <form action="/git/commit" method="post">
                         <div class="form-group">
                           <label for="title">Title</label>
-                          <input class="form-control" type="text" name="title" placeholder="Enter a title for your commit (required)...">
+                          <input class="form-control" type="text" name="title" placeholder="Enter a title for your commit (required)..." required>
                         </div>
 
                         <div class="form-group">
@@ -90,7 +90,7 @@
                           <form action="" class="full-width mb-2">
                             <div class="form-group">
                               <label for="new_branch_name" class="sr-only">Branch name</label>
-                              <input type="text" name="new_branch_name" id="new_branch_name" class="form-control" placeholder="Enter a name for the branch to create...">
+                              <input type="text" name="new_branch_name" id="new_branch_name" class="form-control" placeholder="Enter a name for the branch to create..." required>
                             
                             </div>
                             <button class="btn btn-success btn-block">
@@ -182,7 +182,8 @@
                           </label>
                           <input
                             id="branch_name" class="form-control" type="text"
-                            name="branch_name" placeholder="Enter a name for the new branch..."  
+                            name="branch_name" required
+                            placeholder="Enter a name for the new branch..."  
                           >
                         </div>
                         <button class="btn btn-success btn-block"
@@ -236,12 +237,16 @@
             <form action="/git/branch/checkout" method="post">
               <div class="form-group">
                 <label for="commit_hash">Branch off of</label>
-                <input type="text" class="form-control" name="commit_hash" id="commit_hash" placeholder="Enter the sequence of digits preceding the commit (it's &quot;hash&quot;) that you want to branch off of...">
+                <input type="text" class="form-control" name="commit_hash"
+                  id="commit_hash" required
+                  placeholder="Enter the sequence of digits preceding the commit (it's &quot;hash&quot;) that you want to branch off of...">
               </div>
               
               <div class="form-group">
                 <label for="branch_name">Branch name</label>
-                <input type="text" class="form-control" name="branch_name" id="branch_name" placeholder="Enter a name for the new branch...">
+                <input type="text" class="form-control" name="branch_name"
+                  id="branch_name" placeholder="Enter a name for the new branch..."
+                  required >
               </div>
 
               <% if @diff.nil? || @diff == "" %>
