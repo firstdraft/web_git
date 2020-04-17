@@ -40,6 +40,8 @@ module WebGit
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
       # Just need the file names
+      # Update index?
+      g.status
       @changed_files = g.status.changed.keys
       @deleted_files = g.status.added.keys
       @untracked_files = g.status.untracked.keys
