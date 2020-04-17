@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/jelaniwoods/ruby-git.git
+  revision: da0f099aa78150b50a5844eeb72e8fe0edd5f098
+  branch: jw-fix-git-status
+  specs:
+    git (1.6.0)
+      rchardet (~> 1.8)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -24,7 +32,6 @@ GEM
     erubi (1.8.0)
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
-    git (1.5.0)
     github_api (0.18.2)
       addressable (~> 2.4)
       descendants_tracker (~> 0.0.4)
@@ -81,6 +88,7 @@ GEM
     rails-html-sanitizer (1.0.4)
       loofah (~> 2.2, >= 2.2.2)
     rake (12.3.2)
+    rchardet (1.8.0)
     rdoc (3.12.2)
       json (~> 1.4)
     rspec (3.5.0)
@@ -121,7 +129,7 @@ PLATFORMS
 DEPENDENCIES
   actionview
   diffy
-  git
+  git!
   juwelier (~> 2.1.0)
   rdoc (~> 3.12)
   rspec (~> 3.5.0)

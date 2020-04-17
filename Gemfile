@@ -12,7 +12,7 @@ group :development do
 end
 
 gem 'sinatra'
-gem "git"
+gem "git", git: "https://github.com/jelaniwoods/ruby-git.git", branch: "jw-fix-git-status"
 gem "diffy"
 gem "actionview"
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

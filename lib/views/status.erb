@@ -42,6 +42,10 @@
                   <pre><%= filelist.strip %></pre>
                 <% end %>
               <% end %>
+              <hr>
+              <pre>
+                <%= @status %>
+              </pre>
 
               <% if !@diff.nil? %>
                 <%= @diff %>
