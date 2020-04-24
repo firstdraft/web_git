@@ -39,6 +39,10 @@ module WebGit
     get "/" do
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
+      # Update git index
+      g.status.changed.each do
+        g.diff.entries
+      end
       # Just need the file names
       @changed_files = g.status.changed.keys
       @deleted_files = g.status.added.keys
@@ -52,7 +56,6 @@ module WebGit
         { name: "Added Files:", file_list: @added_files }
       ]
       
-      # TODO shelling out status is different than g.status
       @current_branch = g.current_branch
       # g.branch(@current_branch).checkout # maybe?
       @status = `git status`
