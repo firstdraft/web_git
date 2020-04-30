@@ -243,9 +243,9 @@
               </div>
               
               <div class="form-group">
-                <label for="branch_name">Branch name</label>
-                <input type="text" class="form-control" name="branch_name"
-                  id="branch_name" placeholder="Enter a name for the new branch..."
+                <label for="branch_name_sha">Branch name</label>
+                <input type="text" class="form-control" name="branch_name_sha"
+                  id="branch_name_sha" placeholder="Enter a name for the new branch..."
                   required >
               </div>
 
@@ -269,9 +269,8 @@
                   <span class="commit">
                     <% first_line = commit_parts.first %>
                     <% sha = first_line.split[1] %>
-                    <% copy_sha = '<button class="btn btn-link" id="' + sha + '" onclick="copyToClipboard(' + "'##{sha}'" + ')" data-toggle="tooltip" data-placement="top" title="Copy">' + sha + '</button>' %>
+                    <% copy_sha = '<button class="btn btn-link sha">' + sha + '</button>' %>
                     <%= first_line.gsub(sha, copy_sha) %>
-                    <input type="hidden" class="hidden <%= sha %>" value="<%= sha %>">
                     <!-- * cb351409 - Thu, 19 Mar 2020, 23:59 -0500 (6 days) -->
                   </span>
                 </div>
@@ -285,24 +284,13 @@
   </div>
   <script>
 
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
-    })
+    $(document).ready(function() {
+        $(".sha").click(function() {
+          let text = this.textContent
+          $("#commit_hash").val(text);
+        });
+    });
 
-    function copyToClipboard(element) {
-      var $temp = $("<input>");
-      let text = $(element).text();
-      $("body").append($temp);
-      $temp.val($(element).text()).select();
-      document.execCommand("copy");
-      
-      $(element).attr("data-original-title", "Copied " + $(element).attr("id") )
-      // $(element).effect("highlight", { color: "lightgreen" });
-      $temp.remove();
-      setTimeout(function(){
-        $(element).attr("data-original-title", "Copy to Clipboard")
-      }, 1500);
-    }
   </script>
 </body>
 </html>
