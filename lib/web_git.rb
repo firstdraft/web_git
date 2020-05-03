@@ -17,16 +17,60 @@ module WebGit
       g = Git.open(working_dir)
       logs = g.log
       list = []
-      logs.each do |commit|
-        # line = commit.sha + " " + commit.author.name + " " +
-        # commit.date.strftime("%a, %d %b %Y, %H:%M %z") + " " + commit.message
-        sha = commit.sha.slice(0..7)
-        commit_date = commit.date
-        line = " * " + sha + " - " + commit.date.strftime("%a, %d %b %Y, %H:%M %z") +
-         " (#{time_ago_in_words(commit_date)} ago) " + "<br>&emsp;| " + commit.message 
-        list.push line
+      full_list = []
+      branches = g.branches.local.map(&:name)
+
+      branches.each do |branch_name|
+        branch = { branch: branch_name }
+        p g.checkout(branch_name)
+        list = []
+        # g.branch.name
+        # p "—————————"
+        g.log.sort_by(&:date).each do |log|
+          commit = log.sha.slice(0..7)
+          list.push commit
+        end
+        # p g.branch.name
+        # p "-----"
+        # p list
+        # list.join("<br>")
+        p "—————————"
+        p branch
+        branch[:log] = list
+        branch[:head] = list.last
+        p "—————————"
+        full_list.push branch
       end
-      list.join("<br>")
+      lists = full_list.map{|l| l[:log] }
+      full_list.push( { branch: "ALL", head: "_" } )
+      list = []
+      (lists.count - 1).times do |i|
+        log_hash = lists[i]
+        # p log_hash.class
+        # l = log_hash[:log]
+
+        list = list | log_hash
+      end
+      full_list.push list
+      full_list.to_json
+      # mmm = []
+      # full_list.last.each do |commit|
+      #   mmm.push commit + " — " + g.gcommit(commit).message
+      # end
+      # mmm
+      # oop = `git log --all --oneline`
+      # mmm.reverse.join("<br>") + "<hr>" + oop.gsub("\n", "<br>")
+
+      # logs.each do |commit|
+      #   # line = commit.sha + " " + commit.author.name + " " +
+      #   # commit.date.strftime("%a, %d %b %Y, %H:%M %z") + " " + commit.message
+      #   sha = commit.sha.slice(0..7)
+      #   commit_date = commit.date
+      #   line = " * " + sha + " - " + commit.date.strftime("%a, %d %b %Y, %H:%M %z") +
+      #    " (#{time_ago_in_words(commit_date)} ago) " + "<br>&emsp;| " + commit.message 
+      #   list.push line
+      # end
+      # full_list.join("<hr>")
       #sha = commit.sha.slice(0..7)
       # commit_date = Date.parse commit.date
       # strftime("%a, %d %b %Y, %H:%M %z") -> time_ago_in_words(commit_date)
