@@ -261,23 +261,29 @@
               <% end%>            
             </form>
           </div>
-          <code class="bg-dark text-white p-3">
-            <% @list.each do |commit| %>
-              <% commit_parts = commit.split "\n" %>
+          <% @graph_branches.each do |branch_hash| %>
+            <h4 class="p-4"><%= branch_hash[:branch] %></h4>
+            <code class="bg-dark text-white p-3">
+              <% branch_hash[:log].reverse.each do |commit| %>
               <div>
+                <span class="commit">
+                  <button class="btn btn-link sha"><%= commit[:sha] %></button>
+                </span>
+                — <%= commit[:date].strftime("%a, %d %b %Y, %H:%M %z") %> (<%= commit[:formatted_date] %> ago)
+                  <% heads = "(#{commit[:heads].join(", ")})" if !commit[:heads].empty? %>
+                  <% if commit[:heads].include? @current_branch %>
+                    <%= heads.gsub(@current_branch, '<span class="text-success">HEAD</span> --> ' + @current_branch) %>
+                  <% else %>
+                    <%= heads %>
+                  <% end %>
                 <div>
-                  <span class="commit">
-                    <% first_line = commit_parts.first %>
-                    <% sha = first_line.split[1] %>
-                    <% copy_sha = '<button class="btn btn-link sha">' + sha + '</button>' %>
-                    <%= first_line.gsub(sha, copy_sha) %>
-                    <!-- * cb351409 - Thu, 19 Mar 2020, 23:59 -0500 (6 days) -->
-                  </span>
+                  &emsp; | <%= commit[:message] + " - " + commit[:author] %>
                 </div>
-                <%= commit_parts.last.gsub("\t", "&emsp;") %>
               </div>
-            <% end %>
-          </code>
+              <% end %>
+            </code>
+            <hr>
+          <% end %>
         </div>
       </div>
     </div>

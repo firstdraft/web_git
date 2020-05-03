@@ -3,30 +3,19 @@ require "web_git/version"
 
 module WebGit
   require "web_git/diff"
+  require "web_git/graph"
   require "web_git/string"
   require "sinatra"
   require "date"
   require "git"
   class Server < Sinatra::Base
-    require 'action_view'
-    require 'action_view/helpers'
-    include ActionView::Helpers::DateHelper
 
     get '/log' do
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
-      logs = g.log
-      list = []
-      logs.each do |commit|
-        # line = commit.sha + " " + commit.author.name + " " +
-        # commit.date.strftime("%a, %d %b %Y, %H:%M %z") + " " + commit.message
-        sha = commit.sha.slice(0..7)
-        commit_date = commit.date
-        line = " * " + sha + " - " + commit.date.strftime("%a, %d %b %Y, %H:%M %z") +
-         " (#{time_ago_in_words(commit_date)} ago) " + "<br>&emsp;| " + commit.message 
-        list.push line
-      end
-      list.join("<br>")
+      
+      graph = WebGit::Graph.new(g)
+      graph.to_hash.to_json
       #sha = commit.sha.slice(0..7)
       # commit_date = Date.parse commit.date
       # strftime("%a, %d %b %Y, %H:%M %z") -> time_ago_in_words(commit_date)
@@ -71,24 +60,19 @@ module WebGit
       
       logs = g.log
       @last_commit_message = logs.first.message
-      head = g.show.split("\n").first.split[1].slice(0..7)
+      @head = g.show.split("\n").first.split[1].slice(0..7)
       @list = []
       # (HEAD -> jw-non-sweet)
       # TODO show where branches are on different remotes
       # (origin/master, origin/jw-non-sweet, origin/HEAD)
       # g.branches[:master].gcommit
 
-      logs.each do |commit|
-        sha = commit.sha.slice(0..7)
-        commit_date = commit.date
-        line = " * " + sha + " - " + commit.date.strftime("%a, %d %b %Y, %H:%M %z") +
-         " (#{time_ago_in_words(commit_date)}) "
-        if sha == head
-          line += %Q{(<span class="text-success">HEAD</span> -> #{@current_branch})}
-        end
-        line += "\n\t| " + "#{commit.message} - #{commit.author.name}"
-        @list.push line
+      graph = WebGit::Graph.new(g)
+      @graph_hash = graph.to_hash
+      @graph_branches = @graph_hash.sort do |branch_a, branch_b|
+        branch_b[:log].last[:date] <=> branch_a[:log].last[:date]
       end
+
       erb :status
     end
     
