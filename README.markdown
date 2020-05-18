@@ -5,6 +5,13 @@ An in-browser Git GUI for your Rails project.
 WebGit is a Rails Engine that provides an in-browser visual interface to a simple but effective Git workflow. For educational purposes.
 
 ## Installation
+  <% branch[:log].each do |commit| %>
+    <% line += commit %>
+    <% if commit === branch[:head] %>
+      <% line += " (#{branch[:branch]})" %>
+    
+    <% end %>
+  <% end %>
 
 ```
 

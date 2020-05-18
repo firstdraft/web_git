@@ -52,7 +52,8 @@ module WebGit
         list = list | log_hash
       end
       full_list.push list
-      full_list.to_json
+      # full_list.to_json
+      @full_list = full_list
       # mmm = []
       # full_list.last.each do |commit|
       #   mmm.push commit + " — " + g.gcommit(commit).message
@@ -78,6 +79,7 @@ module WebGit
       #  | blease - Jelani Woods
 
       # " * " + sha + " - " + commit_date + " (" + time_ago_in_words(commit_date) + ") " + "\n\t| " + commit.message 
+      erb :graph
     end
     
     get "/" do
