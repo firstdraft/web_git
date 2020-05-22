@@ -18,7 +18,20 @@ module WebGit
       logs = g.log
       list = []
       full_list = []
+      current_branch = g.current_branch
       branches = g.branches.local.map(&:name)
+
+      had_changes = false
+      if g.diff.size > 0
+        # stash
+        p g.diff.size
+        p "Stashing tmp"
+        g.add(all: true)
+        stash_count = Git::Stashes.new(g).count
+        Git::Stash.new(g, "Tmp Stash #{stash_count}")
+        had_changes = true
+        p g.diff.size
+      end
 
       branches.each do |branch_name|
         branch = { branch: branch_name }
@@ -50,6 +63,12 @@ module WebGit
         # l = log_hash[:log]
 
         list = list | log_hash
+      end
+
+      if had_changes
+        stashes = Git::Stashes.new(g)
+        # Stash pop
+        stashes.apply(0)
       end
       full_list.push list
       # full_list.to_json
