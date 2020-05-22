@@ -3,6 +3,7 @@ require "web_git/version"
 
 module WebGit
   require "web_git/diff"
+  require "web_git/graph"
   require "web_git/string"
   require "sinatra"
   require "date"
@@ -37,16 +38,12 @@ module WebGit
         branch = { branch: branch_name }
         p g.checkout(branch_name)
         list = []
-        # g.branch.name
-        # p "—————————"
+
         g.log.sort_by(&:date).each do |log|
           commit = log.sha.slice(0..7)
           list.push commit
         end
-        # p g.branch.name
-        # p "-----"
-        # p list
-        # list.join("<br>")
+ 
         p "—————————"
         p branch
         branch[:log] = list
@@ -73,6 +70,8 @@ module WebGit
       full_list.push list
       # full_list.to_json
       @full_list = full_list
+      # graph = WebGit::Graph.new(g)
+      # @full_list = graph.to_json
       # mmm = []
       # full_list.last.each do |commit|
       #   mmm.push commit + " — " + g.gcommit(commit).message
