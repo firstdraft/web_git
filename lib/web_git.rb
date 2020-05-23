@@ -19,6 +19,8 @@ module WebGit
       
       graph = WebGit::Graph.new(g)
       @full_list = graph.to_json
+      
+      @output = graph.to_html
       # mmm = []
       # full_list.last.each do |commit|
       #   mmm.push commit + " — " + g.gcommit(commit).message
@@ -100,6 +102,11 @@ module WebGit
         line += "\n\t| " + "#{commit.message} - #{commit.author.name}"
         @list.push line
       end
+      graph = WebGit::Graph.new(g)
+      # @full_list = graph.to_json
+      
+      @commit_graph = graph.to_html
+
       erb :status
     end
     

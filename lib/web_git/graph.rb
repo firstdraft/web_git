@@ -22,6 +22,39 @@ module WebGit
       @full_list
     end
 
+    def to_html
+      graph_json = @full_list.empty? ? to_json : @full_list
+      branch_range = ( 0..(graph_json.length - 3) )
+      branches = graph_json[branch_range]
+
+      neo_thing = {}
+      branches.each do |branch|
+        head = branch[:head]
+        neo_thing[head] = neo_thing.fetch(head, []) 
+        neo_thing[head].push branch[:branch]
+      end
+
+      all_commits = graph_json.last
+
+      output = []
+      all_commits.reverse.each do |commit|
+        real_commit = @git.gcommit(commit)
+        name = real_commit.author.name
+        commit_date = real_commit.date.strftime("%a, %d %b %Y, %H:%M %z")
+        line = "<div>"
+        line += "<span class='commit'>#{commit}</span> — #{commit_date}"
+        if neo_thing.keys.include?(commit)
+          line += " (#{neo_thing[commit].join(", ")})"
+        end
+        line += "</div>"
+        line += "\n&emsp; | #{real_commit.message} - #{name}"
+        p line
+        line = "<div>\n" + line + "\n</div>"
+        p "-------------"
+        output.push line
+      end
+      output
+    end
 
     def has_untracked_changes?
       @git.diff.size > 0
