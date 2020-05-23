@@ -13,13 +13,13 @@ module WebGit
         temporarily_stash_changes
       end
 
-      list = draw_graph
+      draw_graph
 
       if had_changes
         stash_pop
       end
 
-      @full_list.push list
+      @full_list
     end
 
 
@@ -42,30 +42,29 @@ module WebGit
       branches = @git.branches.local.map(&:name)
       branches.each do |branch_name|
         branch = { branch: branch_name }
-        list = []
+        @git.checkout(branch_name)
+        log_commits = []
         @git.log.sort_by(&:date).each do |log|
           commit = log.sha.slice(0..7)
-          list.push commit
+          log_commits.push commit
         end
 
-        branch[:log] = list
-        branch[:head] = list.last
+        branch[:log] = log_commits
+        branch[:head] = log_commits.last
         @full_list.push branch
       end
       lists = @full_list.map{|l| l[:log] }
       combined_branch = { branch: "ALL", head: "_" }
       @full_list.push combined_branch
-      # combined_branch = { branch: "ALL", head: "_" }
-      list = []
+      
+      log_commits = []
       (lists.count - 1).times do |i|
         log_hash = lists[i]
 
-        list = list | log_hash
+        log_commits = log_commits | log_hash
       end
-      # combined_branch[:log] = list
-      # @full_list.push combined_branch
-      # @full_list.push list
-      list
+
+      @full_list.push log_commits
     end
 
   end
