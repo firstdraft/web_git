@@ -42,15 +42,15 @@ module WebGit
         name = real_commit.author.name
         commit_date = real_commit.date.strftime("%a, %d %b %Y, %H:%M %z")
         line = "<div>"
-        line += "<span class='commit'>#{commit}</span> — #{commit_date}"
+        line += '<span class="commit">'
+        line += '<button class="btn btn-link sha">' + commit + "</button>"
+        line += "</span> — #{commit_date}"
         if neo_thing.keys.include?(commit)
           line += " (#{neo_thing[commit].join(", ")})"
         end
         line += "</div>"
         line += "\n&emsp; | #{real_commit.message} - #{name}"
-        p line
         line = "<div>\n" + line + "\n</div>"
-        p "-------------"
         output.push line
       end
       output

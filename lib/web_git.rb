@@ -84,7 +84,7 @@ module WebGit
       
       logs = g.log
       @last_commit_message = logs.first.message
-      head = g.show.split("\n").first.split[1].slice(0..7)
+      @head = g.show.split("\n").first.split[1].slice(0..7)
       @list = []
       # (HEAD -> jw-non-sweet)
       # TODO show where branches are on different remotes
@@ -96,15 +96,13 @@ module WebGit
         commit_date = commit.date
         line = " * " + sha + " - " + commit.date.strftime("%a, %d %b %Y, %H:%M %z") +
          " (#{time_ago_in_words(commit_date)}) "
-        if sha == head
+        if sha == @head
           line += %Q{(<span class="text-success">HEAD</span> -> #{@current_branch})}
         end
         line += "\n\t| " + "#{commit.message} - #{commit.author.name}"
         @list.push line
       end
       graph = WebGit::Graph.new(g)
-      # @full_list = graph.to_json
-      
       @commit_graph = graph.to_html
 
       erb :status
