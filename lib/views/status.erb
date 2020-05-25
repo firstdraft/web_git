@@ -270,7 +270,7 @@
               — <%= commit[:date].strftime("%a, %d %b %Y, %H:%M %z") %>
                 <% heads = "(#{@heads[commit[:sha]].join(", ")})" if @heads.keys.include?(commit[:sha]) %>
                 <% if commit[:sha] == @head%>
-                  <%= heads.gsub(@current_branch, '<span class="text-success">HEAD</span> -->' + @current_branch) %>
+                  <%= heads.gsub(@current_branch, '<span class="text-success">HEAD</span> --> ' + @current_branch) %>
                 <% else %>
                   <%= heads %>
                 <% end %>
