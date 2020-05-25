@@ -18,7 +18,6 @@ module WebGit
       g = Git.open(working_dir)
       
       graph = WebGit::Graph.new(g)
-      # @full_list = graph.to_json
       graph.to_json.to_s 
       #sha = commit.sha.slice(0..7)
       # commit_date = Date.parse commit.date
@@ -26,8 +25,7 @@ module WebGit
       # * 76eff73 - Wed, 11 Mar 2020 19:58:21 +0000 (13 days ago) (HEAD -> current_branch)
       #  | blease - Jelani Woods
 
-      # " * " + sha + " - " + commit_date + " (" + time_ago_in_words(commit_date) + ") " + "\n\t| " + commit.message 
-      # erb :graph
+      # " * " + sha + " - " + commit_date + " (" + time_ago_in_words(commit_date) + ") " + "\n\t| " + commit.message
     end
     
     get "/" do

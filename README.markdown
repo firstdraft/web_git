@@ -6,7 +6,6 @@ WebGit is a Rails Engine that provides an in-browser visual interface to a simpl
 
 ## Installation
 
-
 ```
 
 Add this line to your application's Gemfile:
