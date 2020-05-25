@@ -3,6 +3,50 @@
 for each commit see if it has a HEAD if so, put branch name else none
 
  %>
+<%= @full_list %>
+ <hr>
+ <hr>
+ <hr>
+<%= @full_list2 %>
+ <hr>
+ <hr>
+ <hr>
+ <hr>
+<% branches = @full_list2[0..(@full_list.length-3)] %>
+////
+<% heads = @graph.headsx %>
+<%=  heads.keys %>
+<%=  heads %>
+<% @full_list2.last.reverse.each do |commit| %>
+<div>
+  <span class="commit">
+    <button>
+      <%= commit[:sha] %>
+    </button>
+  </span>
+   — <%= commit[:date].strftime("%a, %d %b %Y, %H:%M %z") %>
+   (<%= heads[commit[:sha]].join(", ") if heads.keys.include?(commit[:sha]) %>)
+   <div>
+    &emsp; | <%= commit[:message] + " - " + commit[:author] %>
+   </div>
+</div>
+<% end %>
+ <hr>
+ <hr>
+ <hr>
+ <hr>
+ <hr>
+
+
+
+But, instead of having to manually define routes for each user in the User table, we want to instead define one route and make the `Macho_Bravo` part flexible, like a query string.
+
+This is all related to the new topic, Flexible Path Segments. There is a video under Week 8 ( before class ) that walks you through it (specifically around 6:15 the syntax is shown).
+
+So your first step should be define a Route that matches the pattern `/users/Macho_Bravo`.
+
+Once the Route is setup, complete the rest of the RCAV so that it displays the user details page of any given username
+
 
 <% branches = @full_list[0..(@full_list.length-3)] %>
 <% new_stuff = {}%>

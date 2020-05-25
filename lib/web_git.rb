@@ -19,7 +19,9 @@ module WebGit
       
       graph = WebGit::Graph.new(g)
       @full_list = graph.to_json
-      
+      other_graph = WebGit::Graph.new(g)
+      @full_list2 = other_graph.to_better_json
+      @graph = other_graph
       @output = graph.to_html
       # mmm = []
       # full_list.last.each do |commit|
