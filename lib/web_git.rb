@@ -20,24 +20,6 @@ module WebGit
       graph = WebGit::Graph.new(g)
       # @full_list = graph.to_json
       graph.to_json.to_s 
-      # mmm = []
-      # full_list.last.each do |commit|
-      #   mmm.push commit + " — " + g.gcommit(commit).message
-      # end
-      # mmm
-      # oop = `git log --all --oneline`
-      # mmm.reverse.join("<br>") + "<hr>" + oop.gsub("\n", "<br>")
-
-      # logs.each do |commit|
-      #   # line = commit.sha + " " + commit.author.name + " " +
-      #   # commit.date.strftime("%a, %d %b %Y, %H:%M %z") + " " + commit.message
-      #   sha = commit.sha.slice(0..7)
-      #   commit_date = commit.date
-      #   line = " * " + sha + " - " + commit.date.strftime("%a, %d %b %Y, %H:%M %z") +
-      #    " (#{time_ago_in_words(commit_date)} ago) " + "<br>&emsp;| " + commit.message 
-      #   list.push line
-      # end
-      # full_list.join("<hr>")
       #sha = commit.sha.slice(0..7)
       # commit_date = Date.parse commit.date
       # strftime("%a, %d %b %Y, %H:%M %z") -> time_ago_in_words(commit_date)
