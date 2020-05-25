@@ -18,9 +18,8 @@ module WebGit
       g = Git.open(working_dir)
       
       graph = WebGit::Graph.new(g)
-      @full_list = graph.to_json
-      
-      @output = graph.to_html
+      # @full_list = graph.to_json
+      graph.to_json.to_s 
       # mmm = []
       # full_list.last.each do |commit|
       #   mmm.push commit + " — " + g.gcommit(commit).message
@@ -46,7 +45,7 @@ module WebGit
       #  | blease - Jelani Woods
 
       # " * " + sha + " - " + commit_date + " (" + time_ago_in_words(commit_date) + ") " + "\n\t| " + commit.message 
-      erb :graph
+      # erb :graph
     end
     
     get "/" do
@@ -103,7 +102,8 @@ module WebGit
         @list.push line
       end
       graph = WebGit::Graph.new(g)
-      @commit_graph = graph.to_html
+      @graph_json = graph.to_json
+      @heads = graph.heads
 
       erb :status
     end

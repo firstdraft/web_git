@@ -262,31 +262,23 @@
             </form>
           </div>
           <code class="bg-dark text-white p-3">
-            <% @list.each do |commit| %>
-              <% commit_parts = commit.split "\n" %>
+            <% @graph_json.last.reverse.each do |commit| %>
+            <div>
+              <span class="commit">
+                <button class="btn btn-link sha"><%= commit[:sha] %></button>
+              </span>
+              — <%= commit[:date].strftime("%a, %d %b %Y, %H:%M %z") %>
+                <% heads = "(#{@heads[commit[:sha]].join(", ")})" if @heads.keys.include?(commit[:sha]) %>
+                <% if commit[:sha] == @head%>
+                  <%= heads.gsub(@current_branch, '<span class="text-success">HEAD</span> -->' + @current_branch) %>
+                <% else %>
+                  <%= heads %>
+                <% end %>
               <div>
-                <div>
-                  <span class="commit">
-                    <% first_line = commit_parts.first %>
-                    <% sha = first_line.split[1] %>
-                    <% copy_sha = '<button class="btn btn-link sha">' + sha + '</button>' %>
-                    <%= first_line.gsub(sha, copy_sha) %>
-                    <!-- * cb351409 - Thu, 19 Mar 2020, 23:59 -0500 (6 days) -->
-                  </span>
-                </div>
-                <%= commit_parts.last.gsub("\t", "&emsp;") %>
+                &emsp; | <%= commit[:message] + " - " + commit[:author] %>
               </div>
+            </div>
             <% end %>
-          </code>
-          <hr class="m-5">
-          <code class="bg-dark text-white p-3">
-            <% @commit_graph.each do |commit| %>
-              <% if commit.include?(@head) %>
-                <%= commit.gsub(@current_branch, "<span class='text-success'>HEAD</span> --> " + @current_branch ) %>
-              <% else %>
-                <%= commit %>
-              <% end %>
-            <% end%>
           </code>
           <div class="card">
           </div>

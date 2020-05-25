@@ -1,59 +1,28 @@
 module WebGit
   require "git"
   class Graph
+    attr_accessor :heads
+
     def initialize(git)
       @git = git
       @full_list = []
+      @heads = {}
     end
 
     def to_json
       
-      had_changes = has_untracked_changes?
-      if had_changes
+      has_changes = has_untracked_changes?
+      if has_changes
         temporarily_stash_changes
       end
 
       draw_graph
 
-      if had_changes
+      if has_changes
         stash_pop
       end
 
       @full_list
-    end
-
-    def to_html
-      graph_json = @full_list.empty? ? to_json : @full_list
-      branch_range = ( 0..(graph_json.length - 3) )
-      branches = graph_json[branch_range]
-
-      neo_thing = {}
-      branches.each do |branch|
-        head = branch[:head]
-        neo_thing[head] = neo_thing.fetch(head, []) 
-        neo_thing[head].push branch[:branch]
-      end
-
-      all_commits = graph_json.last
-
-      output = []
-      all_commits.reverse.each do |commit|
-        real_commit = @git.gcommit(commit)
-        name = real_commit.author.name
-        commit_date = real_commit.date.strftime("%a, %d %b %Y, %H:%M %z")
-        line = "<div>"
-        line += '<span class="commit">'
-        line += '<button class="btn btn-link sha">' + commit + "</button>"
-        line += "</span> — #{commit_date}"
-        if neo_thing.keys.include?(commit)
-          line += " (#{neo_thing[commit].join(", ")})"
-        end
-        line += "</div>"
-        line += "\n&emsp; | #{real_commit.message} - #{name}"
-        line = "<div>\n" + line + "\n</div>"
-        output.push line
-      end
-      output
     end
 
     def has_untracked_changes?
@@ -77,17 +46,32 @@ module WebGit
         branch = { branch: branch_name }
         @git.checkout(branch_name)
         log_commits = []
-        @git.log.sort_by(&:date).each do |log|
-          commit = log.sha.slice(0..7)
+        @git.log.sort_by(&:date).each do |git_commit_object|
+          commit = {}
+          commit[:sha] = git_commit_object.sha.slice(0..7)
+          commit[:date] = git_commit_object.date
+          commit[:message] = git_commit_object.message
+          commit[:author] = git_commit_object.author.name
           log_commits.push commit
         end
 
         branch[:log] = log_commits
-        branch[:head] = log_commits.last
+        branch[:head] = log_commits.last[:sha]
         @full_list.push branch
       end
+
       lists = @full_list.map{|l| l[:log] }
-      combined_branch = { branch: "ALL", head: "_" }
+      all_heads = @full_list.map do |branch_hash|
+        head_sha = branch_hash[:head]
+        branch_name = branch_hash[:branch]
+
+        if @heads[head_sha].nil?
+          @heads[head_sha] = [ branch_name ]
+        else
+          @heads[head_sha].push branch_name
+        end
+      end
+      combined_branch = { branch: "ALL", head: "_", heads: all_heads }
       @full_list.push combined_branch
       
       log_commits = []
