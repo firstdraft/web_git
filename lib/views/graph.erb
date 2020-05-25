@@ -25,7 +25,7 @@ for each commit see if it has a HEAD if so, put branch name else none
     </button>
   </span>
    — <%= commit[:date].strftime("%a, %d %b %Y, %H:%M %z") %>
-   (<%= heads[commit[:sha]].join(", ") if heads.keys.include?(commit[:sha]) %>)
+   <%= heads[commit[:sha]] if heads.keys.include?(commit[:sha]) %>
    <div>
     &emsp; | <%= commit[:message] + " - " + commit[:author] %>
    </div>
