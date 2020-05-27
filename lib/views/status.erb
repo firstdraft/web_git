@@ -262,14 +262,14 @@
             </form>
           </div>
           <code class="bg-dark text-white p-3">
-            <% @graph_json.last.reverse.each do |commit| %>
+            <% @graph_hash.last[:log].reverse.each do |commit| %>
             <div>
               <span class="commit">
                 <button class="btn btn-link sha"><%= commit[:sha] %></button>
               </span>
-              — <%= commit[:date].strftime("%a, %d %b %Y, %H:%M %z") %>
-                <% heads = "(#{@heads[commit[:sha]].join(", ")})" if @heads.keys.include?(commit[:sha]) %>
-                <% if commit[:sha] == @head%>
+              — <%= commit[:date].strftime("%a, %d %b %Y, %H:%M %z") %> (<%= commit[:formatted_date] %> ago)
+                <% heads = "(#{commit[:heads].join(", ")})" if !commit[:heads].empty? %>
+                <% if commit[:heads].include? @current_branch %>
                   <%= heads.gsub(@current_branch, '<span class="text-success">HEAD</span> --> ' + @current_branch) %>
                 <% else %>
                   <%= heads %>

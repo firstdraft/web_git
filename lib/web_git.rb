@@ -9,16 +9,13 @@ module WebGit
   require "date"
   require "git"
   class Server < Sinatra::Base
-    require 'action_view'
-    require 'action_view/helpers'
-    include ActionView::Helpers::DateHelper
 
     get '/log' do
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
       
       graph = WebGit::Graph.new(g)
-      graph.to_json.to_s 
+      graph.to_hash.to_json
       #sha = commit.sha.slice(0..7)
       # commit_date = Date.parse commit.date
       # strftime("%a, %d %b %Y, %H:%M %z") -> time_ago_in_words(commit_date)
@@ -70,19 +67,8 @@ module WebGit
       # (origin/master, origin/jw-non-sweet, origin/HEAD)
       # g.branches[:master].gcommit
 
-      logs.each do |commit|
-        sha = commit.sha.slice(0..7)
-        commit_date = commit.date
-        line = " * " + sha + " - " + commit.date.strftime("%a, %d %b %Y, %H:%M %z") +
-         " (#{time_ago_in_words(commit_date)}) "
-        if sha == @head
-          line += %Q{(<span class="text-success">HEAD</span> -> #{@current_branch})}
-        end
-        line += "\n\t| " + "#{commit.message} - #{commit.author.name}"
-        @list.push line
-      end
       graph = WebGit::Graph.new(g)
-      @graph_json = graph.to_json
+      @graph_hash = graph.to_hash
       @heads = graph.heads
 
       erb :status
