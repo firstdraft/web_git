@@ -8,6 +8,7 @@ source "https://rubygems.org"
 group :development do
   gem "rspec", "~> 3.5.0"
   gem "rdoc", "~> 3.12"
+  gem "stackprof"
   gem "juwelier", "~> 2.1.0"
 end
 
