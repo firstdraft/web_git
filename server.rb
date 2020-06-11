@@ -7,6 +7,8 @@ require "stackprof"
 require "date"
 require "git"
 require 'rack-mini-profiler'
+require "flamegraph"
+require "memory_profiler"
 # class Server < Sinatra::Base
   use Rack::MiniProfiler
   get '/log' do
