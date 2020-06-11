@@ -74,6 +74,7 @@ require 'rack-mini-profiler'
       @graph_branches = @graph_hash.sort do |branch_a, branch_b|
         branch_b[:log].last[:date] <=> branch_a[:log].last[:date]
       end
+    g.checkout(@current_branch)
     # StackProf.stop
     # StackProf.results('status.dump')
     erb :status
