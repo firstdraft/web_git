@@ -6,6 +6,9 @@ module WebGit
   require "web_git/graph"
   require "web_git/string"
   require "sinatra"
+  require 'rack-mini-profiler'
+  require "flamegraph"
+  require "memory_profiler"
   require "stackprof"
   require "date"
   require "git"
@@ -69,13 +72,13 @@ module WebGit
       # g.branches[:master].gcommit
 
       graph = WebGit::Graph.new(g)
-      StackProf.start(mode: :cpu)
+      # StackProf.start(mode: :cpu)
         @graph_hash = graph.to_hash
         @graph_branches = @graph_hash.sort do |branch_a, branch_b|
           branch_b[:log].last[:date] <=> branch_a[:log].last[:date]
         end
-      StackProf.stop
-      StackProf.results('status.dump')
+      # StackProf.stop
+      # StackProf.results('status.dump')
       g.checkout(@current_branch)
       erb :status
     end
