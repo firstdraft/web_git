@@ -11,6 +11,8 @@ require "flamegraph"
 require "memory_profiler"
 # class Server < Sinatra::Base
   use Rack::MiniProfiler
+  Rack::MiniProfiler.config.enable_advanced_debugging_tools = true
+  
   get '/log' do
     working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
     g = Git.open(working_dir)
