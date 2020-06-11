@@ -7,7 +7,7 @@ require "stackprof"
 require "date"
 require "git"
 require 'rack-mini-profiler'
-class Server < Sinatra::Base
+# class Server < Sinatra::Base
   use Rack::MiniProfiler
   get '/log' do
     working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
@@ -144,4 +144,4 @@ class Server < Sinatra::Base
     g.pull
     redirect to("/")
   end
-end
+# end
