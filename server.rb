@@ -74,7 +74,7 @@ require "git"
         branch_b[:log].last[:date] <=> branch_a[:log].last[:date]
       end
     StackProf.stop
-    StackProf.results('/tmp/profile')
+    StackProf.results('status.dump')
     erb :status
   end
   
