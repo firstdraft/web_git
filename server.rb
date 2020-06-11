@@ -6,8 +6,9 @@ require "sinatra"
 require "stackprof"
 require "date"
 require "git"
-# class Server < Sinatra::Base
-
+require 'rack-mini-profiler'
+class Server < Sinatra::Base
+  use Rack::MiniProfiler
   get '/log' do
     working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
     g = Git.open(working_dir)
@@ -68,13 +69,13 @@ require "git"
     # g.branches[:master].gcommit
 
     graph = WebGit::Graph.new(g)
-    StackProf.start(mode: :cpu)
+    # StackProf.start(mode: :cpu)
       @graph_hash = graph.to_hash
       @graph_branches = @graph_hash.sort do |branch_a, branch_b|
         branch_b[:log].last[:date] <=> branch_a[:log].last[:date]
       end
-    StackProf.stop
-    StackProf.results('status.dump')
+    # StackProf.stop
+    # StackProf.results('status.dump')
     erb :status
   end
   
@@ -143,4 +144,4 @@ require "git"
     g.pull
     redirect to("/")
   end
-# end
+end
