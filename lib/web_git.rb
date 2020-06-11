@@ -75,7 +75,8 @@ module WebGit
           branch_b[:log].last[:date] <=> branch_a[:log].last[:date]
         end
       StackProf.stop
-      StackProf.results('/tmp/profile')
+      StackProf.results('status.dump')
+      g.checkout(@current_branch)
       erb :status
     end
     
