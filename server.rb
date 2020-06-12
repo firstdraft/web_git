@@ -34,14 +34,15 @@ require "memory_profiler"
     working_dir = "#{Dir.pwd}/../../scrap/see-what-kinda-things-are-preinstalled-for-gitpod/"#File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
     g = Git.open(working_dir)
     # Update git index
-    g.status.changed.each do
+    status = g.status
+    status.changed.each do
       g.diff.entries
     end
     # Just need the file names
-    @changed_files = g.status.changed.keys
-    @deleted_files = g.status.added.keys
-    @untracked_files = g.status.untracked.keys
-    @added_files = g.status.deleted.keys
+    @changed_files = status.changed.keys
+    @deleted_files = status.added.keys
+    @untracked_files = status.untracked.keys
+    @added_files = status.deleted.keys
 
     @statuses = [
       { name: "Changed Files:", file_list: @changed_files },
