@@ -99,18 +99,22 @@ module WebGit
       redirect to("/")
     end
     
-    post "/branch/checkout" do
+    post "/branch/checkout/new" do
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
       name = params.fetch(:branch_name).downcase.gsub(" ", "_")
       commit = params.fetch(:commit_hash)
-      branches = g.branches.local.map(&:full)
-      if branches.include?(name) || commit.nil? 
-        g.branch(name).checkout
-      else
-        g.branch(name).checkout
-        g.reset_hard(g.gcommit(commit))
-      end
+      g.branch(name).checkout
+      g.reset_hard(g.gcommit(commit))
+      redirect to("/")
+    end
+    
+    post "/branch/checkout" do
+      working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
+      g = Git.open(working_dir)
+      name = params.fetch(:branch_name)
+      g.branch(name).checkout
+      
       redirect to("/")
     end
     
