@@ -10,7 +10,7 @@ group :development do
   gem "rdoc", "~> 3.12"
   gem "juwelier", "~> 2.1.0"
 end
-  gem 'rack-mini-profiler'
+  gem 'rack-mini-profiler', require: false
   
   gem 'memory_profiler'
   gem 'flamegraph'

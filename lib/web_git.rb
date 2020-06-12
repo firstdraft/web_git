@@ -80,6 +80,7 @@ module WebGit
       # StackProf.stop
       # StackProf.results('status.dump')
       g.checkout(@current_branch)
+      p "back to basics"
       erb :status
     end
     

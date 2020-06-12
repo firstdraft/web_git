@@ -14,7 +14,7 @@ require "memory_profiler"
   Rack::MiniProfiler.config.enable_advanced_debugging_tools = true
   
   get '/log' do
-    working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
+    working_dir = "/Users/jelani/workspace/scrap/see-what-kinda-things-are-preinstalled-for-gitpod/.git"#File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
     g = Git.open(working_dir)
     
     graph = WebGit::Graph.new(g)
@@ -31,7 +31,7 @@ require "memory_profiler"
   end
   
   get "/" do
-    working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
+    working_dir = "#{Dir.pwd}/../../scrap/see-what-kinda-things-are-preinstalled-for-gitpod/"#File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
     g = Git.open(working_dir)
     # Update git index
     g.status.changed.each do
