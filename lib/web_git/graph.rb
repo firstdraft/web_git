@@ -25,7 +25,6 @@ module WebGit
       if has_changes
         stash_pop
       end
-
       @full_list
     end
 
@@ -45,6 +44,7 @@ module WebGit
     end
 
     def draw_graph
+      starting_branch = @git.current_branch
       branches = @git.branches.local.map(&:name)
       branches.each do |branch_name|
         branch = { branch: branch_name }
@@ -54,13 +54,14 @@ module WebGit
         branch[:head] = log_commits.last[:sha]
         @full_list.push branch
       end
+      @git.checkout(starting_branch)
 
-       @full_list.each do |branch_hash|
+      @full_list.each do |branch_hash|
         head_sha = branch_hash[:head]
         branch_name = branch_hash[:branch]
 
         if @heads[head_sha].nil?
-          @heads[head_sha] = [ branch_name ]
+          @heads[head_sha] = [branch_name]
         else
           @heads[head_sha].push branch_name
         end
