@@ -1,10 +1,10 @@
 
-require "web_git/version"
+require_relative "web_git/version"
 
 module WebGit
-  require "web_git/diff"
-  require "web_git/graph"
-  require "web_git/string"
+  require_relative "web_git/diff"
+  require_relative "web_git/graph"
+  require_relative "web_git/string"
   require "sinatra"
   require 'rack-mini-profiler'
   require "flamegraph"

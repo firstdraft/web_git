@@ -9,12 +9,13 @@ group :development do
   gem "rspec", "~> 3.5.0"
   gem "rdoc", "~> 3.12"
   gem "juwelier", "~> 2.1.0"
-end
   gem 'rack-mini-profiler', require: false
-  
+
   gem 'memory_profiler'
   gem 'flamegraph'
   gem "stackprof"
+  gem "shotgun"
+end
 
 gem 'sinatra'
 gem "git"
