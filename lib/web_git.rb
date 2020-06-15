@@ -13,6 +13,8 @@ module WebGit
   require "date"
   require "git"
   class Server < Sinatra::Base
+    use Rack::MiniProfiler
+    Rack::MiniProfiler.config.enable_advanced_debugging_tools = true
 
     get '/log' do
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
@@ -72,15 +74,12 @@ module WebGit
       # g.branches[:master].gcommit
 
       graph = WebGit::Graph.new(g)
-      # StackProf.start(mode: :cpu)
-        @graph_hash = graph.to_hash
-        @graph_branches = @graph_hash.sort do |branch_a, branch_b|
-          branch_b[:log].last[:date] <=> branch_a[:log].last[:date]
-        end
-      # StackProf.stop
-      # StackProf.results('status.dump')
+      @graph_hash = graph.to_hash
+      @graph_branches = @graph_hash.sort do |branch_a, branch_b|
+        branch_b[:log].last[:date] <=> branch_a[:log].last[:date]
+      end
+        
       g.checkout(@current_branch)
-      p "back to basics"
       erb :status
     end
     
