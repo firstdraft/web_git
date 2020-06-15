@@ -30,7 +30,7 @@ module WebGit
     end
     
     get "/" do
-      working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
+      working_dir = "#{Dir.pwd}/../../scrap/see-what-kinda-things-are-preinstalled-for-gitpod/"#File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
       # Update git index
       g.status.changed.each do
