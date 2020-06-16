@@ -13,6 +13,7 @@ group :development do
   gem "rspec-rails"
   gem "capybara"
   gem "sqlite3"
+  gem "web_git", path: "."
 end
 
 gem 'sinatra'

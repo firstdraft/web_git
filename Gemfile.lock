@@ -1,3 +1,13 @@
+PATH
+  remote: .
+  specs:
+    web_git (0.1.0)
+      actionview
+      diffy
+      git
+      sinatra
+      tzinfo-data
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -245,6 +255,7 @@ DEPENDENCIES
   sinatra
   sqlite3
   tzinfo-data
+  web_git!
 
 BUNDLED WITH
    2.1.4
