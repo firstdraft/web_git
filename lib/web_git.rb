@@ -26,7 +26,14 @@ module WebGit
     end
     
     get "/" do
-      working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
+      # working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
+      working_dir = Dir.pwd
+      p "WORKING DIR"
+      p working_dir
+      if working_dir != "/Users/jelani/workspace/firstdraft/web_git/spec/dummy"
+        p "BREAK"
+        break
+      end
       g = Git.open(working_dir)
       # Update git index
       g.status.changed.each do

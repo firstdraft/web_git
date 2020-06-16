@@ -1,9 +1,8 @@
 require "spec_helper"
-require "web_git"
 
 module WebGit
   RSpec.feature "Widget management", :type => :feature do
-    scenario "User creates a new widget" do
+    scenario "User wants to see commit history" do
       visit "/git"
       # visit("http://localhost/git")
       p page.text
