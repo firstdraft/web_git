@@ -9,6 +9,10 @@ group :development do
   gem "rspec", "~> 3.5.0"
   gem "rdoc", "~> 3.12"
   gem "juwelier", "~> 2.1.0"
+  gem "rails", ">= 6.0.3.1"
+  gem "rspec-rails"
+  gem "capybara"
+  gem "sqlite3"
 end
 
 gem 'sinatra'
