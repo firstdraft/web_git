@@ -16,16 +16,23 @@
 # users commonly want.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
-ENV["RAILS_ENV"] ||= 'test'
-require File.expand_path("../dummy/config/environment.rb", __FILE__)
-require 'rspec/rails'
-require 'capybara/rails'
+# ENV["RAILS_ENV"] ||= 'test'
+# ENV['RACK_ENV'] = 'test'
+# require File.expand_path("../dummy/config/environment.rb", __FILE__)
+# require 'rspec/rails'
+require 'capybara/rspec'
+# require 'rack/test'
+# require 'web_git'
+# Capybara.configure do |config|
+#   config.always_include_port = true
+# end
 
-Capybara.configure do |config|
-  config.always_include_port = true
-end
-
+# module RSpecMixin
+#   include Rack::Test::Methods
+#   def app() WebGit::Server end
+# end
 RSpec.configure do |config|
+  # config.include RSpecMixin 
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
