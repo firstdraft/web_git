@@ -27,7 +27,7 @@ require "capybara"
 
 RSpec.configure do |config|
   Capybara.server = :webrick
-  Capybara.javascript_driver = :selenium_chrome_headless
+  Capybara.javascript_driver = :selenium_chrome
   # config.include RSpecMixin 
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
