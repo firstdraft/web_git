@@ -14,7 +14,7 @@ module WebGit
       p page.text
       expect(page).to have_text("On branch master")
 
-      system! "rm -r #{File.dirname(__FILE__)}/../dummy/.git"
+      system "rm -r #{File.dirname(__FILE__)}/../dummy/.git"
     end
   end
 end
