@@ -11,6 +11,7 @@ group :development do
   gem "juwelier", "~> 2.1.0"
   gem "rails", ">= 6.0.3.1"
   gem "capybara"
+  gem "selenium-webdriver"
   gem "sqlite3"
   gem "web_git", path: "."
 end

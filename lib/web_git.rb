@@ -26,11 +26,12 @@ module WebGit
     end
     
     get "/" do
-      # working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
-      working_dir = Dir.pwd
-      p "WORKING DIR"
-      p working_dir = "/Users/jelani/workspace/firstdraft/web_git/spec/dummy"
+      working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/../"
+      # p working_dir = Dir.pwd
+      # p "WORKING DIR"
+      # p working_dir = "/Users/jelani/workspace/firstdraft/web_git/spec/dummy"
       if working_dir != "/Users/jelani/workspace/firstdraft/web_git/spec/dummy"
+        p working_dir
         p "BREAK"
         break
       end

@@ -18,20 +18,16 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 # ENV["RAILS_ENV"] ||= 'test'
 # ENV['RACK_ENV'] = 'test'
-# require File.expand_path("../dummy/config/environment.rb", __FILE__)
+require File.expand_path("../dummy/config/environment.rb", __FILE__)
 # require 'rspec/rails'
 require 'capybara/rspec'
-# require 'rack/test'
-# require 'web_git'
-# Capybara.configure do |config|
-#   config.always_include_port = true
-# end
 
-# module RSpecMixin
-#   include Rack::Test::Methods
-#   def app() WebGit::Server end
-# end
+require "capybara"
+
+
 RSpec.configure do |config|
+  Capybara.server = :webrick
+  Capybara.javascript_driver = :selenium_chrome_headless
   # config.include RSpecMixin 
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
