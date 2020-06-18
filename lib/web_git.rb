@@ -9,6 +9,7 @@ module WebGit
   require "date"
   require "git"
   class Server < Sinatra::Base
+    enable :sessions
 
     get '/log' do
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
@@ -26,6 +27,12 @@ module WebGit
     end
     
     get "/" do
+      @alert = session[:alert]
+      @notice = session[:notice]
+      
+      session[:alert] = nil
+      session[:notice] = nil
+
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
       # Update git index
@@ -79,6 +86,10 @@ module WebGit
     post "/commit" do
       title = params[:title]
       description = params[:description]
+      if title.nil?
+        session[:alert] = "You need to make a commit message."
+        redirect to("/")
+      end
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
       g.add(:all => true)  
@@ -86,6 +97,9 @@ module WebGit
         title += "\n#{description}"
       end
       g.commit(title)
+      session[:notice] = "Commit created successfully."
+      p "session"
+      p session[:notice]
       redirect to("/")
     end
     
@@ -119,6 +133,7 @@ module WebGit
       g = Git.open(working_dir)
       name = params[:branch_name]
       g.branch(name).delete
+      session[:notice] = "Branch deleted successfully."
       redirect to("/")
     end
 
@@ -132,13 +147,15 @@ module WebGit
       #   g.push remote
       # end
       g.push
+      session[:notice] = "Pushed branch successfully to #{g.remote}."
       redirect to("/")
     end
-
+    
     post "/pull" do
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
       g.pull
+      session[:notice] = "Pulled successfully."
       redirect to("/")
     end
   end
