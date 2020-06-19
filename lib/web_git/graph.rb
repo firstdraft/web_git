@@ -29,6 +29,24 @@ module WebGit
       @full_list
     end
 
+    def to_array
+      # Each element is a branch log
+      #   Each branch log has a starting commit and ending commit
+      #   Each branch log only has commits that are unique to that branch
+      lists = @full_list.map{|l| l[:log] }
+      combined_branch = { branch: "ALL", head: "_" }
+      
+      
+      log_commits = []
+      (lists.count - 1).times do |i|
+        log_hash = lists[i]
+
+        log_commits = log_commits | log_hash
+      end
+      combined_branch[:log] = log_commits
+      log_commits
+    end
+
     def has_untracked_changes?
       @git.diff.size > 0
     end
@@ -77,6 +95,7 @@ module WebGit
         commit[:formatted_date] = time_ago_in_words(git_commit_object.date)
         commit[:message] = git_commit_object.message
         commit[:author] = git_commit_object.author.name
+        commit[:branch_name] = @git.current_branch
         commit[:heads] = []
         log_commits.push commit
       end

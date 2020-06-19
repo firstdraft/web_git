@@ -270,12 +270,20 @@
               author: "John Doe",
               mode: "extended" // or compact if you don't want the messages
             });
-            <% bees = @graph_branches.first(4) %>
-            <% bees.each do |branch| %>
-              let <%= branch[:branch].gsub("-", "_") %> = gitgraph.branch("<%= branch[:branch] %>");
-              <% branch[:log].reverse.each do |commit| %>
-                <%= branch[:branch].gsub("-", "_") %>.commit({message: '<%= commit[:message].to_s.gsub("\n", " ") %>', author: "<%= commit[:author] %>", sha1: "<%= commit[:sha] %>"});
+            <% commits = @graph.to_array %>
+            <% commits.each_with_index do |commit, index| %>
+                //first <%= index %>
+              <% if index > 0 %>
+                //<%= index %>
+                <% previous_branches = commits.first(index)%>
+                <% if !previous_branches.map{|c| c[:branch_name]}.include?(commit[:branch_name]) %>
+                  let branch_<%= commit[:branch_name].gsub("-", "_") %> = gitgraph.branch("<%= commit[:branch_name] %>");
+                <% end %>
+              <% else%>
+                  let branch_<%= commit[:branch_name].gsub("-", "_") %> = gitgraph.branch("<%= commit[:branch_name] %>");
               <% end %>
+              branch_<%= commit[:branch_name].gsub("-", "_") %>.commit({message: '<%= commit[:message].to_s.gsub("\n", " ") %>', author: "<%= commit[:author] %>", sha1: "<%= commit[:sha] %>"});
+              
             <% end %>
             // gitgraph.commit("My first commit"); // 1 commit upon HEAD
             // var develop = gitgraph.branch("develop"); // New branch from HEAD
