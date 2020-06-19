@@ -5,7 +5,7 @@ module WebGit
     scenario "User wants to see what branch they're on" do
       Capybara.app = Rack::Builder.parse_file(File.dirname(__FILE__) + "/../dummy/config.ru").first
 
-      # TODO not great, since I believe chdir is not threadsage
+      # TODO not great, since I believe chdir is not threadsafe
       Dir.chdir(File.dirname(__FILE__) + "/../dummy/") do
         g = Git.init
         g.add(:all=>true) 
