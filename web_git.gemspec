@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0".freeze) if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib".freeze]
   s.authors = ["Raghu Betina".freeze, "Jelani Woods".freeze]
-  s.date = "2020-03-31"
+  s.date = "2020-06-16"
   s.description = "WebGit is a Rails Engine that provides an in-browser visual interface to a simple but effective Git workflow. For educational purposes.".freeze
   s.email = "raghu@firstdraft.com".freeze
   s.extra_rdoc_files = [
@@ -28,8 +28,12 @@ Gem::Specification.new do |s|
     "README.markdown",
     "Rakefile",
     "VERSION",
+    "lib/generators/web_git/install_generator.rb",
+    "lib/views/status.erb",
     "lib/web_git.rb",
     "lib/web_git/diff.rb",
+    "lib/web_git/graph.rb",
+    "lib/web_git/string.rb",
     "lib/web_git/version.rb",
     "web_git.gemspec"
   ]
@@ -50,6 +54,10 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<rspec>.freeze, ["~> 3.5.0"])
       s.add_development_dependency(%q<rdoc>.freeze, ["~> 3.12"])
       s.add_development_dependency(%q<juwelier>.freeze, ["~> 2.1.0"])
+      s.add_development_dependency(%q<rails>.freeze, [">= 6.0.3.1"])
+      s.add_development_dependency(%q<rspec-rails>.freeze, [">= 0"])
+      s.add_development_dependency(%q<capybara>.freeze, [">= 0"])
+      s.add_development_dependency(%q<sqlite3>.freeze, [">= 0"])
     else
       s.add_dependency(%q<sinatra>.freeze, [">= 0"])
       s.add_dependency(%q<git>.freeze, [">= 0"])
@@ -59,6 +67,10 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<rspec>.freeze, ["~> 3.5.0"])
       s.add_dependency(%q<rdoc>.freeze, ["~> 3.12"])
       s.add_dependency(%q<juwelier>.freeze, ["~> 2.1.0"])
+      s.add_dependency(%q<rails>.freeze, [">= 6.0.3.1"])
+      s.add_dependency(%q<rspec-rails>.freeze, [">= 0"])
+      s.add_dependency(%q<capybara>.freeze, [">= 0"])
+      s.add_dependency(%q<sqlite3>.freeze, [">= 0"])
     end
   else
     s.add_dependency(%q<sinatra>.freeze, [">= 0"])
@@ -69,6 +81,10 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<rspec>.freeze, ["~> 3.5.0"])
     s.add_dependency(%q<rdoc>.freeze, ["~> 3.12"])
     s.add_dependency(%q<juwelier>.freeze, ["~> 2.1.0"])
+    s.add_dependency(%q<rails>.freeze, [">= 6.0.3.1"])
+    s.add_dependency(%q<rspec-rails>.freeze, [">= 0"])
+    s.add_dependency(%q<capybara>.freeze, [">= 0"])
+    s.add_dependency(%q<sqlite3>.freeze, [">= 0"])
   end
 end
 
