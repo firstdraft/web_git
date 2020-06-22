@@ -1,0 +1,80 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gitgraph.js/1.11.4/gitgraph.min.js"></script>
+<canvas id="gitGraph"></canvas>
+<script>
+  var gitgraph = new GitGraph({
+    template: "metro", // or blackarrow
+    orientation: "vertical-reverse",
+    author: "John Doe",
+    mode: "extended" // or compact if you don't want the messages
+  });
+
+    <% created_branches = []%>
+    <% @graph.commit_order.each do |sha| %>
+    <% commit_info = @graph.graph_order[sha] %>
+    <% commit_info %>
+    <% if @graph.commit_order.index(sha) == 0 %>
+      var master = gitgraph.branch("master");
+      
+      gitgraph.commit({ sha1: "<%= sha %>", message: ""});
+      
+      <% created_branches.push "master" %>
+    <% else %>
+      <% if !created_branches.include? commit_info[:branch] %>
+        const <%= commit_info[:branch].gsub("-", "_") %> = gitgraph.branch("<%= commit_info[:branch].gsub("-", "_") %>");
+        
+      <% end %>
+      <% created_branches.push commit_info[:branch] %>
+      <%= commit_info[:branch].gsub("-", "_") %>.commit({message: "", sha1: "<%= sha %>"});
+      <% if commit_info[:branches_to].size > 0 %>
+        <% commit_info[:branches_to].each do |branch| %>
+          const <%= branch.gsub("-", "_") %> = gitgraph.branch("<%= branch.gsub("-", "_") %>");
+          
+          <% created_branches.push branch %>
+        <% end %>
+      <% end %>
+
+      
+    <% end %>
+  <% end %>
+
+  // gitgraph.commit("My first commit"); // 1 commit upon HEAD
+  // var develop = gitgraph.branch("develop"); // New branch from HEAD
+  // var myfeature = develop.branch("myfeature"); // New branch from develop
+  // develop.commit("Develop a feature - part 1");
+  // develop.commit("Develop a feature - part 2");
+
+  // master.commit({message: "Fast bugfix", author: "John Fixer"});
+  // myfeature.commit({message: "New cool feature", author: "John Feature"});
+
+  // develop.merge(master);
+  // myfeature.merge(master);
+  // master.commit({message: "Release of version 0.1", tag: "0.1", author: "John Releaser", sha1: "abcdef0"});
+</script>
+  <% created_branches = []%>
+  <% @graph.commit_order.each do |sha| %>
+    <% commit_info = @graph.graph_order[sha] %>
+    <% commit_info %>
+    <% if @graph.commit_order.index(sha) == 0 %>
+      var master = gitgraph.branch("master");
+      <br>
+      gitgraph.commit({ sha1: "<%= sha %>"", message: ""}});
+      <br>
+      <% created_branches.push "master" %>
+    <% else %>
+      <% if !created_branches.include? commit_info[:branch] %>
+        const <%= commit_info[:branch] %> = gitgraph.branch("<%= commit_info[:branch] %>");
+        <br>
+      <% end %>
+      <% created_branches.push commit_info[:branch] %>
+      <%= commit_info[:branch] %>.commit({message: "", sha1: "<%= sha %>"});
+      <% if commit_info[:branches_to].size > 0 %>
+        <% commit_info[:branches_to].each do |branch| %>
+          const <%= branch %> = gitgraph.branch("<%= branch %>");
+          <br>
+          <% created_branches.push branch %>
+        <% end %>
+      <% end %>
+
+      <br>
+    <% end %>
+  <% end %>

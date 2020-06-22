@@ -6,11 +6,15 @@ module WebGit
     require "action_view/helpers"
     include ActionView::Helpers::DateHelper
     attr_accessor :heads
+    attr_reader :graph_order
+    attr_reader :commit_order
 
     def initialize(git)
       @git = git
       @full_list = []
       @heads = {}
+      @graph_order = {}
+      @commit_order = []
     end
 
     def to_hash
@@ -103,6 +107,19 @@ module WebGit
       true
     end
 
+    def find_other_branch_names(sha, name, list)
+      branch_names = []
+      list.each do |branch|
+        if branch[:name] != name
+          log = branch[:log]
+          if log.include? sha
+            branch_names.push branch[:name]
+          end
+        end
+      end
+      branch_names
+    end
+
     def get_parents(sha, name, list)
       commit = @git.gcommit(sha)
       parents = commit.parents
@@ -123,7 +140,20 @@ module WebGit
         end
         # p "====uniqueness====="
         # puts "\n" * 3
-        
+        if @graph_order.keys.include? sha
+
+          @graph_order[sha][:branches_to] = find_other_branch_names(sha, name, @list)
+          p @graph_order[sha][:branches_to]
+        else
+          @graph_order[sha] = { branch: branch_name, branches_to: [] }
+        end
+        if @commit_order.include? sha
+          i = @commit_order.index(sha)
+          @commit_order.delete_at(i)
+          @commit_order.push sha
+        else
+          @commit_order.push sha
+        end
         p "Commit: #{sha} - #{commit.message} - branch: #{branch_name}"
         if parents.size > 1
           p "Merge Point #{parents.map{ |c| c.sha.slice(0..7)}.join(", ")}"
@@ -134,7 +164,15 @@ module WebGit
         end
       else
         # It's the first commit
-        p "Commit: #{sha} - #{commit.message}"
+        if @commit_order.include? sha
+          i = @commit_order.index(sha)
+          @commit_order.delete_at(i)
+          @commit_order.push sha
+        else
+          @commit_order.push sha
+        end
+        @graph_order[sha] = { branch: "master", branches_to: [] }
+        p "Commit: #{sha} - #{commit.message} - branch: master"
         return
       end
     end
@@ -155,14 +193,25 @@ module WebGit
         last = @git.gcommit(log.first)
         # p "Last commit #{last.sha.slice(0..7)} - #{last.message}"
         get_parents(last.sha.slice(0..7), name, @list)
-
+        p "_________________________"
+        p "_________________________"
+        # p @graph_order
         # TODO
         # Create Hash of commits, ordered by date—
         # { "47485296": { branch: "master", branches_to: [] }, "3b3aaccf": { branch: "master", branches_to: ["b-branch"]}, "4bb66595": {},  }
         p "+++---"
       end
       p "======"
-
+      p @commit_order = @commit_order.reverse
+      # ["f62e91d6", "4bb66595", "de987471", "3b3aaccf", "47485296"]
+      @commit_order.each do |sha|
+        commit_info = @graph_order[sha]
+        if commit_info[:branches_to].size > 0
+          p "#{sha} - #{commit_info[:branch]}, branches to #{commit_info[:branches_to].join(" ,")}"
+        else
+          p "#{sha} - #{@graph_order[sha][:branch]}"
+        end
+      end
       []
     end
 

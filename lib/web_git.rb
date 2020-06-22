@@ -14,17 +14,17 @@ module WebGit
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
       
-      graph = WebGit::Graph.new(g)
+      @graph = WebGit::Graph.new(g)
       # graph.find_common_shas.to_json
       # graph.tree_traversal.to_json
-      graph.build_backwards.to_json
+      @graph.build_backwards#.to_json
       # graph.to_hash.to_json
       #sha = commit.sha.slice(0..7)
       # commit_date = Date.parse commit.date
       # strftime("%a, %d %b %Y, %H:%M %z") -> time_ago_in_words(commit_date)
       # * 76eff73 - Wed, 11 Mar 2020 19:58:21 +0000 (13 days ago) (HEAD -> current_branch)
       #  | blease - Jelani Woods
-
+      erb :log
       # " * " + sha + " - " + commit_date + " (" + time_ago_in_words(commit_date) + ") " + "\n\t| " + commit.message 
     end
     
