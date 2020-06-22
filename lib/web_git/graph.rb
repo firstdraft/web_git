@@ -120,6 +120,22 @@ module WebGit
       branch_names
     end
 
+    def find_merging_branch_name(first, last)
+      list = @list
+      # Start with two commit shas
+      # f0c357b, 64d6e33 
+      # Find branch with f0c357b, (Should already be able to find this one)
+      # Find branch with 64d6e33, but NOT f0c357b
+      branch1 = ""
+      branch2 = ""
+
+      list.each do |branch|
+        if !branch[:log].include?(first) && branch[:log].include?(last)
+          return branch[:name]
+        end
+      end
+    end
+
     def get_parents(sha, name, list)
       commit = @git.gcommit(sha)
       parents = commit.parents
@@ -141,11 +157,23 @@ module WebGit
         # p "====uniqueness====="
         # puts "\n" * 3
         if @graph_order.keys.include? sha
-
-          @graph_order[sha][:branches_to] = find_other_branch_names(sha, name, @list)
-          p @graph_order[sha][:branches_to]
+          p "FINDING OTHER BRANCH NAMES"
+          # if already have a branch to, maybe DON't add another one
+          other_branch_tos = @graph_order.keys.map do |other_sha|
+            @graph_order[other_sha][:branches_to]
+          end
+          p "//////////"
+          p other_branch_tos.reduce(&:+)
+          p "//////////"
+          if !other_branch_tos.reduce(&:+).include?(branch_name)
+            p "First one"
+            @graph_order[sha][:branches_to] = find_other_branch_names(sha, name, @list)
+            p @graph_order[sha][:branches_to]
+          else
+            p "Don't you do it!"
+          end
         else
-          @graph_order[sha] = { branch: branch_name, branches_to: [] }
+          @graph_order[sha] = { branch: branch_name, branches_to: [], merge_between: [], message: commit.message, author: commit.author.name }
         end
         if @commit_order.include? sha
           i = @commit_order.index(sha)
@@ -156,7 +184,11 @@ module WebGit
         end
         p "Commit: #{sha} - #{commit.message} - branch: #{branch_name}"
         if parents.size > 1
+          @graph_order[sha][:merge_between] = parents.map{ |c| c.sha.slice(0..7)}
           p "Merge Point #{parents.map{ |c| c.sha.slice(0..7)}.join(", ")}"
+          first = parents.first.sha.slice(0..7)
+          last = parents.last.sha.slice(0..7)
+          @graph_order[last][:branch] = find_merging_branch_name(first, last) 
         end
         
         parents.each do |parent|
@@ -171,7 +203,7 @@ module WebGit
         else
           @commit_order.push sha
         end
-        @graph_order[sha] = { branch: "master", branches_to: [] }
+        @graph_order[sha] = { branch: "master", branches_to: [], merge_between: [], message: commit.message, author: commit.author.name }
         p "Commit: #{sha} - #{commit.message} - branch: master"
         return
       end
@@ -192,6 +224,10 @@ module WebGit
         # p @keep_list
         last = @git.gcommit(log.first)
         # p "Last commit #{last.sha.slice(0..7)} - #{last.message}"
+        exclude_branches = {}
+        # Looks like
+        # { "master": [], "update": [], "c-branch": ["master", "update"]}
+        # On the basis that all of master exists in c-branch currently
         get_parents(last.sha.slice(0..7), name, @list)
         p "_________________________"
         p "_________________________"
