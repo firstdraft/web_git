@@ -35,6 +35,11 @@ module WebGit
 
     def list_all_shas
       @list = []
+            
+      has_changes = has_untracked_changes?
+      if has_changes
+        temporarily_stash_changes
+      end
       branches = @git.branches.local.map(&:name)
       branches.each do |branch_name|
         branch = { name: branch_name }
@@ -46,6 +51,9 @@ module WebGit
         end
         branch[:log] = log
         @list.push branch
+      end
+      if has_changes
+        stash_pop
       end
     end
 
@@ -73,10 +81,12 @@ module WebGit
             p "Unique Log: #{unique_commits}"
             new_branch[:log] = unique_commits
             p "Parents"
-            @git.gcommit(unique_commits.first).parents.each do |gcommit|
-              p "---"
-              p gcommit.message + " " + gcommit.sha
-              p "---"
+            if !unique_commits.empty?
+              @git.gcommit(unique_commits.first).parents.each do |gcommit|
+                p "---"
+                p gcommit.message + " " + gcommit.sha
+                p "---"
+              end
             end
             new_list.push new_branch
             # current_log.each do |sha|

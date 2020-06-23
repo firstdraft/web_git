@@ -15,7 +15,7 @@
     <% if @graph.commit_order.index(sha) == 0 %>
       var master = gitgraph.branch("master");
       
-      gitgraph.commit({ sha1: "<%= sha %>", message: "<%= commit_info[:message] %>", author: "<%= commit_info[:author] %>"});
+      gitgraph.commit({ sha1: "<%= sha %>", message: "<%= commit_info[:message].split("\n").first %>", author: "<%= commit_info[:author] %>"});
       
       <% created_branches.push "master" %>
     <% else %>
@@ -32,12 +32,12 @@
           <%= branch_1%>,
           {
             sha1: "<%= sha %>",
-            message: "<%= commit_info[:message] %>",
+            message: "<%= commit_info[:message].split("\n").first %>",
             author: "<%= commit_info[:author] %>"
           }
         );
       <% else %>
-        <%= commit_info[:branch].gsub("-", "_") %>.commit({message: "<%= commit_info[:message] %>", sha1: "<%= sha %>", author: "<%= commit_info[:author] %>"});
+        <%= commit_info[:branch].gsub("-", "_") %>.commit({message: "<%= commit_info[:message].split("\n").first %>", sha1: "<%= sha %>", author: "<%= commit_info[:author] %>"});
       <% end %>
       <% if commit_info[:branches_to].size > 0 %>
         <% commit_info[:branches_to].each do |branch| %>
