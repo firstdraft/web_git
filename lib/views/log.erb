@@ -1,0 +1,130 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gitgraph.js/1.11.4/gitgraph.min.js"></script>
+<canvas id="gitGraph"></canvas>
+<script>
+  var gitgraph = new GitGraph({
+    template: "metro", // or blackarrow
+    orientation: "vertical-reverse",
+    author: "John Doe",
+    mode: "extended" // or compact if you don't want the messages
+  });
+
+    <% created_branches = []%>
+    <% @graph.commit_order.each do |sha| %>
+    <% commit_info = @graph.graph_order[sha] %>
+    <% commit_info %>
+    <% if @graph.commit_order.index(sha) == 0 %>
+      var master = gitgraph.branch("master");
+      
+      gitgraph.commit({ sha1: "<%= sha %>", message: "<%= commit_info[:message] %>", author: "<%= commit_info[:author] %>"});
+      
+      <% created_branches.push "master" %>
+    <% else %>
+      <% if !created_branches.include? commit_info[:branch] %>
+        const <%= commit_info[:branch].gsub("-", "_") %> = gitgraph.branch("<%= commit_info[:branch].gsub("-", "_") %>");
+      <% end %>
+
+      <% created_branches.push commit_info[:branch] %>
+      <% if commit_info[:merge_between].size > 0 %>
+        <% merge_commits = commit_info[:merge_between] %>
+        <% branch_1 = @graph.graph_order[merge_commits.first][:branch].gsub("-", "_") %>
+        <% branch_2 = @graph.find_merging_branch_name(merge_commits.first, merge_commits.last).gsub("-", "_") %>
+        <%= branch_2 %>.merge(
+          <%= branch_1%>,
+          {
+            sha1: "<%= sha %>",
+            message: "<%= commit_info[:message] %>",
+            author: "<%= commit_info[:author] %>"
+          }
+        );
+      <% else %>
+        <%= commit_info[:branch].gsub("-", "_") %>.commit({message: "<%= commit_info[:message] %>", sha1: "<%= sha %>", author: "<%= commit_info[:author] %>"});
+      <% end %>
+      <% if commit_info[:branches_to].size > 0 %>
+        <% commit_info[:branches_to].each do |branch| %>
+          <% if !created_branches.include? branch %>
+            const <%= branch.gsub("-", "_") %> = gitgraph.branch("<%= branch.gsub("-", "_") %>");
+            
+            <% created_branches.push branch %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      
+    <% end %>
+  <% end %>
+</script>
+  <% created_branches = []%>
+  <% @graph.commit_order.each do |sha| %>
+    <% commit_info = @graph.graph_order[sha] %>
+    <% commit_info %>
+    <% if @graph.commit_order.index(sha) == 0 %>
+      var master = gitgraph.branch("master");
+      <br>
+      gitgraph.commit({ sha1: "<%= sha %>"", message: ""}});
+      <br>
+      <% created_branches.push "master" %>
+    <% else %>
+      <% if !created_branches.include? commit_info[:branch] %>
+        const <%= commit_info[:branch] %> = gitgraph.branch("<%= commit_info[:branch] %>");
+        <br>
+      <% end %>
+      <% created_branches.push commit_info[:branch] %>
+      <%= commit_info[:branch] %>.commit({message: "", sha1: "<%= sha %>"});
+      <% if commit_info[:branches_to].size > 0 %>
+        <% commit_info[:branches_to].each do |branch| %>
+          const <%= branch %> = gitgraph.branch("<%= branch %>");
+          <br>
+          <% created_branches.push branch %>
+          <br>
+        <% end %>
+      <% end %>
+
+      <br>
+    <% end %>
+  <% end %>
+<hr>
+
+
+    <% created_branches = []%>
+    <% @graph.commit_order.each do |sha| %>
+    <% commit_info = @graph.graph_order[sha] %>
+    <% commit_info %>
+    <% if @graph.commit_order.index(sha) == 0 %>
+      var master = gitgraph.branch("master");
+      <br>
+      gitgraph.commit({ sha1: "<%= sha %>", message: "<%= commit_info[:message] %>", author: "<%= commit_info[:author] %>"});
+      <br>
+      
+      <% created_branches.push "master" %>
+    <% else %>
+      <% if !created_branches.include? commit_info[:branch] %>
+        const <%= commit_info[:branch].gsub("-", "_") %> = gitgraph.branch("<%= commit_info[:branch].gsub("-", "_") %>");
+        <br>
+      <% end %>
+
+      <% created_branches.push commit_info[:branch] %>
+      <% if commit_info[:merge_between].size > 0 %>
+        <% merge_commits = commit_info[:merge_between] %>
+        <%# @graph.graph_order %>
+        <% branch_1 = @graph.graph_order[merge_commits.first][:branch] %>
+        <% branch_2 = @graph.find_merging_branch_name(merge_commits.first, merge_commits.last)%>
+        <%= branch_1 %>.merge(<%= branch_2%>);
+        <br>
+      <% else %>
+        <%= commit_info[:branch].gsub("-", "_") %>.commit({message: "<%= commit_info[:message] %>", sha1: "<%= sha %>", author: "<%= commit_info[:author] %>"});
+        <br>
+      <% end %>
+      <% if commit_info[:branches_to].size > 0 %>
+        <% commit_info[:branches_to].each do |branch| %>
+          <% if !created_branches.include? branch %>
+            const <%= branch.gsub("-", "_") %> = gitgraph.branch("<%= branch.gsub("-", "_") %>");
+            <br> 
+            
+            <% created_branches.push branch %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      
+    <% end %>
+  <% end %>

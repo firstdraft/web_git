@@ -6,11 +6,15 @@ module WebGit
     require "action_view/helpers"
     include ActionView::Helpers::DateHelper
     attr_accessor :heads
+    attr_reader :graph_order
+    attr_reader :commit_order
 
     def initialize(git)
       @git = git
       @full_list = []
       @heads = {}
+      @graph_order = {}
+      @commit_order = []
     end
 
     def to_hash
@@ -26,6 +30,255 @@ module WebGit
         stash_pop
       end
       @full_list
+    end
+
+    def list_all_shas
+      @list = []
+      branches = @git.branches.local.map(&:name)
+      branches.each do |branch_name|
+        branch = { name: branch_name }
+        @git.checkout(branch_name)
+        log = []
+        @git.log.each do |git_commit_object|
+          sha = git_commit_object.sha.slice(0..7)
+          log.push sha
+        end
+        branch[:log] = log
+        @list.push branch
+      end
+    end
+
+    def find_common_shas
+      list_all_shas
+      @keep_list = @list
+      new_list = []
+      # Only need to compare to the master branch?
+      # master = @list
+      @list.each do |branch|
+        if branch[:name] == "master"
+          current_log = branch[:log]
+          other_branches = @list - [ branch ]
+          new_list.push({name: "master", log: current_log})
+          p "Current Branch: #{branch[:name]}"
+          p "================================"
+          other_branches.each do |other_branch|
+            p "Other Branch: #{other_branch[:name]}"
+            new_branch = { name: other_branch[:name]}
+            branch_log = other_branch[:log]
+            
+            p "Current Log: #{current_log}"
+            p "Branch Log: #{branch_log}"
+            unique_commits = branch_log - current_log
+            p "Unique Log: #{unique_commits}"
+            new_branch[:log] = unique_commits
+            p "Parents"
+            @git.gcommit(unique_commits.first).parents.each do |gcommit|
+              p "---"
+              p gcommit.message + " " + gcommit.sha
+              p "---"
+            end
+            new_list.push new_branch
+            # current_log.each do |sha|
+            # end
+          end
+          p "================================"
+          puts "\n" * 3
+        end
+      end
+      new_list
+    end
+
+    def is_unique_sha?(sha, name, list)
+      # p "IS UNIQUE"
+      list.each do |branch|
+        if branch[:name] != name
+          # p "Branch name: #{branch[:name]}"
+          # p "(real)current: " + name
+          log = branch[:log]
+          # p "log"
+          # p log
+          # p " - " + sha
+          if log.include? sha
+            return false
+          end
+        end
+      end
+      true
+    end
+
+    def find_other_branch_names(sha, name, list)
+      branch_names = []
+      list.each do |branch|
+        if branch[:name] != name
+          log = branch[:log]
+          if log.include? sha
+            branch_names.push branch[:name]
+          end
+        end
+      end
+      branch_names
+    end
+
+    def find_merging_branch_name(first, last)
+      list = @list
+      # Start with two commit shas
+      # f0c357b, 64d6e33 
+      # Find branch with f0c357b, (Should already be able to find this one)
+      # Find branch with 64d6e33, but NOT f0c357b
+      branch1 = ""
+      branch2 = ""
+
+      list.each do |branch|
+        if !branch[:log].include?(first) && branch[:log].include?(last)
+          return branch[:name]
+        end
+      end
+    end
+
+    def get_parents(sha, name, list)
+      commit = @git.gcommit(sha)
+      parents = commit.parents
+      # if parents.size > 1 then it's a merge commit
+      if parents.size > 0
+        # Find out if sha is unique, 
+        # If not, branch is current
+        # Else branch is 'master'
+        branch_name = "master"
+        # p "SHA CLASSS"
+        # p sha.class
+        # p "#{sha}"
+        # puts "\n" * 3
+        # p "====uniqueness====="
+        if is_unique_sha?(sha, name, @list)
+          # p "IS UNIQUE"
+          branch_name = name
+        end
+        # p "====uniqueness====="
+        # puts "\n" * 3
+        if @graph_order.keys.include? sha
+          p "FINDING OTHER BRANCH NAMES"
+          # if already have a branch to, maybe DON't add another one
+          other_branch_tos = @graph_order.keys.map do |other_sha|
+            @graph_order[other_sha][:branches_to]
+          end
+          p "//////////"
+          p other_branch_tos.reduce(&:+)
+          p "//////////"
+          if !other_branch_tos.reduce(&:+).include?(branch_name)
+            p "First one"
+            @graph_order[sha][:branches_to] = find_other_branch_names(sha, name, @list)
+            p @graph_order[sha][:branches_to]
+          else
+            p "Don't you do it!"
+          end
+        else
+          @graph_order[sha] = { branch: branch_name, branches_to: [], merge_between: [], message: commit.message, author: commit.author.name }
+        end
+        if @commit_order.include? sha
+          i = @commit_order.index(sha)
+          @commit_order.delete_at(i)
+          @commit_order.push sha
+        else
+          @commit_order.push sha
+        end
+        p "Commit: #{sha} - #{commit.message} - branch: #{branch_name}"
+        if parents.size > 1
+          @graph_order[sha][:merge_between] = parents.map{ |c| c.sha.slice(0..7)}
+          p "Merge Point #{parents.map{ |c| c.sha.slice(0..7)}.join(", ")}"
+          first = parents.first.sha.slice(0..7)
+          last = parents.last.sha.slice(0..7)
+          @graph_order[last][:branch] = find_merging_branch_name(first, last) 
+        end
+        
+        parents.each do |parent|
+          get_parents(parent.sha.slice(0..7), name, list)
+        end
+      else
+        # It's the first commit
+        if @commit_order.include? sha
+          i = @commit_order.index(sha)
+          @commit_order.delete_at(i)
+          @commit_order.push sha
+        else
+          @commit_order.push sha
+        end
+        @graph_order[sha] = { branch: "master", branches_to: [], merge_between: [], message: commit.message, author: commit.author.name }
+        p "Commit: #{sha} - #{commit.message} - branch: master"
+        return
+      end
+    end
+
+    def build_backwards
+      # [{"name":"master","log":["3c391fc0","f0c357bb","64d6e333","f716b366"]},{"name":"c-branch","log":["ef99623c"]},{"name":"update","log":["bc9833b9"]}]
+      list = find_common_shas
+      
+      p "building..."
+      list.reverse.each do |branch|
+        name = branch[:name]
+        p "Branch: #{name}"
+        log = branch[:log]
+        # p log.last.class
+        # p @list
+        # p "[][][][]"
+        # p @keep_list
+        last = @git.gcommit(log.first)
+        # p "Last commit #{last.sha.slice(0..7)} - #{last.message}"
+        exclude_branches = {}
+        # Looks like
+        # { "master": [], "update": [], "c-branch": ["master", "update"]}
+        # On the basis that all of master exists in c-branch currently
+        get_parents(last.sha.slice(0..7), name, @list)
+        p "_________________________"
+        p "_________________________"
+        # p @graph_order
+        # TODO
+        # Create Hash of commits, ordered by date—
+        # { "47485296": { branch: "master", branches_to: [] }, "3b3aaccf": { branch: "master", branches_to: ["b-branch"]}, "4bb66595": {},  }
+        p "+++---"
+      end
+      p "======"
+      p @commit_order = @commit_order.reverse
+      # ["f62e91d6", "4bb66595", "de987471", "3b3aaccf", "47485296"]
+      @commit_order.each do |sha|
+        commit_info = @graph_order[sha]
+        if commit_info[:branches_to].size > 0
+          p "#{sha} - #{commit_info[:branch]}, branches to #{commit_info[:branches_to].join(" ,")}"
+        else
+          p "#{sha} - #{@graph_order[sha][:branch]}"
+        end
+      end
+      []
+    end
+
+    def tree_traversal
+      tree = []
+      @git.log.each do |git_commit_object|
+        sha = git_commit_object.sha.slice(0..7)
+        parents = git_commit_object.parents.map{ |parent| { sha: parent.sha, message: parent.message}}
+        git_tree = @git.gtree(git_commit_object.sha)
+        children = git_tree.children#.map{ |child| { sha: child.sha, message: child.message}}
+        object = {message: git_commit_object.message, sha: sha, parents: parents, children: children}
+        tree.push object 
+      end
+      tree
+    end
+
+    def to_array
+      # Each element is a branch log
+      #   Each branch log has a starting commit and ending commit
+      #   Each branch log only has commits that are unique to that branch
+      lists = @full_list.map{|l| l[:log] }
+      combined_branch = { branch: "ALL", head: "_" }
+      
+      
+      log_commits = []
+      (lists.count - 1).times do |i|
+        log_hash = lists[i]
+
+        log_commits = log_commits | log_hash
+      end
+      combined_branch[:log] = log_commits
+      log_commits
     end
 
     def has_untracked_changes?
@@ -78,6 +331,7 @@ module WebGit
         commit[:formatted_date] = time_ago_in_words(git_commit_object.date)
         commit[:message] = git_commit_object.message
         commit[:author] = git_commit_object.author.name
+        commit[:branch_name] = @git.current_branch
         commit[:heads] = []
         log_commits.push commit
       end
