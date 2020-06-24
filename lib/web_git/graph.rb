@@ -175,8 +175,8 @@ module WebGit
           p "//////////"
           p other_branch_tos.reduce(&:+)
           p "//////////"
-          if !other_branch_tos.reduce(&:+).include?(branch_name)
-            p "First one"
+          if !other_branch_tos.reduce(&:+).include?(name) # name or branch_name?
+            p "First one #{branch_name}"
             @graph_order[sha][:branches_to] = find_other_branch_names(sha, name, @list)
             p @graph_order[sha][:branches_to]
           else
@@ -185,6 +185,7 @@ module WebGit
         else
           @graph_order[sha] = { branch: branch_name, branches_to: [], merge_between: [], message: commit.message, author: commit.author.name }
         end
+        # Determine order of commits to draw
         if @commit_order.include? sha
           i = @commit_order.index(sha)
           @commit_order.delete_at(i)
@@ -193,6 +194,7 @@ module WebGit
           @commit_order.push sha
         end
         p "Commit: #{sha} - #{commit.message} - branch: #{branch_name}"
+        # Handle Merging?
         if parents.size > 1
           @graph_order[sha][:merge_between] = parents.map{ |c| c.sha.slice(0..7)}
           p "Merge Point #{parents.map{ |c| c.sha.slice(0..7)}.join(", ")}"
@@ -224,7 +226,9 @@ module WebGit
       list = find_common_shas
       
       p "building..."
+      # Why reverse?
       list.reverse.each do |branch|
+      # list.each do |branch|
         name = branch[:name]
         p "Branch: #{name}"
         log = branch[:log]
@@ -232,13 +236,15 @@ module WebGit
         # p @list
         # p "[][][][]"
         # p @keep_list
-        last = @git.gcommit(log.first)
-        # p "Last commit #{last.sha.slice(0..7)} - #{last.message}"
-        exclude_branches = {}
-        # Looks like
-        # { "master": [], "update": [], "c-branch": ["master", "update"]}
-        # On the basis that all of master exists in c-branch currently
-        get_parents(last.sha.slice(0..7), name, @list)
+        if !log.empty?
+          last = @git.gcommit(log.first)
+          # p "Last commit #{last.sha.slice(0..7)} - #{last.message}"
+          exclude_branches = {}
+          # Looks like
+          # { "master": [], "update": [], "c-branch": ["master", "update"]}
+          # On the basis that all of master exists in c-branch currently
+          get_parents(last.sha.slice(0..7), name, @list)
+        end
         p "_________________________"
         p "_________________________"
         # p @graph_order
