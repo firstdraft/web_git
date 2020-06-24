@@ -249,7 +249,7 @@
                   required >
               </div>
 
-              <% if @diff.nil? || @diff == "" %>
+              <% if @changed_files.count > 0 %>
                 <button disabled="disabled" class="btn btn-primary btn-block">
                   Can't go back in time while you have pending changes. Commit or discard them first.
                 </button>
