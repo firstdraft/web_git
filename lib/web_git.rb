@@ -112,7 +112,7 @@ module WebGit
     post "/branch/checkout" do
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
-      name = params.fetch(:branch_name)
+      name = params.fetch(:branch_name).downcase.gsub(" ", "_")
       g.branch(name).checkout
       
       redirect to("/")
@@ -122,7 +122,7 @@ module WebGit
     post "/branch/delete" do
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
-      name = params[:branch_name]
+      name = params.fetch(:branch_name).downcase.gsub(" ", "_")
       g.branch(name).delete
       redirect to("/")
     end
