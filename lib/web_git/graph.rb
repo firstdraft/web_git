@@ -258,7 +258,7 @@ module WebGit
             commits[sha][:branches].push branch_name
             commits[sha][:branches] = commits[sha][:branches].uniq
           end
-          
+
           if git_commit_object.parents.count > 0
 
             git_commit_object.parents.each do |parent|                
@@ -269,12 +269,13 @@ module WebGit
                 commits[parent.sha.slice(0..7)][:branches].push branch_name
                 commits[parent.sha.slice(0..7)][:branches] = commits[parent.sha.slice(0..7)][:branches].uniq
                 
-                if commits[sha][:branches].count  == 1 && commits[parent.sha.slice(0..7)][:branches].include?(commits[sha][:branches].first)
-                  commits[parent.sha.slice(0..7)][:new_branch] = true
-                end
-                if commits[parent.sha.slice(0..7)][:children].count > 1
-                  commits[parent.sha.slice(0..7)][:new_branch] = true
-                end
+                # if commits[sha][:branches].count  == 1 && commits[parent.sha.slice(0..7)][:branches].include?(commits[sha][:branches].first)
+                #   commits[parent.sha.slice(0..7)][:new_branch] = true
+                # end
+                # If parent commit has More branches than current commit, the current commit starts a new branch
+                # if commits[parent.sha.slice(0..7)][:branches].count > commits[sha][:branches].count
+                #   commits[parent.sha.slice(0..7)][:new_branch] = true
+                # end
               else
                 commits[parent.sha.slice(0..7)] = { message: parent.message, children: [sha], branches: [ branch_name], new_branch: false }
               end
@@ -283,6 +284,19 @@ module WebGit
         end
       end
 
+      # See if there are any new branches on HEAD
+      # commits.keys.each do |sha|
+      #   # If parent commit has More branches than current commit, the current commit starts a new branch
+      #   commit = @git.gcommit(sha)
+      #   commit.parents.each do |parent|
+      #     parent_sha = parent.sha.slice(0..7)
+      #     if commits[parent_sha][:branches].count == (commits[sha][:branches].count + 1)
+      #       commits[sha][:new_branch] = true
+      #       p sha
+      #       p "[[[["
+      #     end
+      #   end
+      # end
       commits
     end
 
