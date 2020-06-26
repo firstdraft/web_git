@@ -41,7 +41,9 @@ module WebGit
       #   branch[:log] = log
       # end
 
-      @graph.generate_children.to_json
+      commits = @graph.generate_children
+      @graph.thing(commits).to_json
+      # commits.to_json
       # @graph.build_backwards#.to_json
       # graph.to_hash.to_json
       #sha = commit.sha.slice(0..7)

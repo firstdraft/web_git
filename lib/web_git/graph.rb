@@ -13,6 +13,7 @@ module WebGit
       @git = git
       @full_list = []
       @heads = {}
+      @head = nil
       @graph_order = {}
       @commit_order = []
     end
@@ -242,6 +243,11 @@ module WebGit
 
     #  If parent commit has a different branch than commit of current branch,
     #    the current commit is on new branch
+
+    # Keep track of which commits are HEAD on what branch
+    # How to find what branch the commit was made on
+    #   First commit was made on master
+    #   
     def generate_children
       commits = {}
       branches = @git.branches.local.map(&:name)
@@ -253,32 +259,61 @@ module WebGit
           sha = git_commit_object.sha.slice(0..7)
           p "Commit - #{sha} - #{git_commit_object.message} Branch: #{branch_name}"
           if !commits.keys.include? sha
-            commits[sha] = { message: git_commit_object.message, children: [], branches: [ branch_name ], new_branch: false }
+            commits[sha] = { 
+              message: git_commit_object.message,
+              children: [],
+              branches: [ branch_name ],
+              new_branch: false,
+              heads: [],
+              parents: []
+            }
           elsif !commits[sha][:branches].include? branch_name
             commits[sha][:branches].push branch_name
             commits[sha][:branches] = commits[sha][:branches].uniq
           end
+          
+          if @git.log.first.sha == git_commit_object.sha
+            p "HEAD " + git_commit_object.message 
+            commits[sha][:heads] = commits[sha][:heads].push branch_name
+          end
+          
+          if git_commit_object.parents.count > 1
+            p "MErge " + sha
+            p git_commit_object.parents.map{|c| c.sha.slice(0..7) }
+            p "-_____-"
+          end
+          commits[sha][:parents] = git_commit_object.parents.map{|c| c.sha.slice(0..7) }
+          
+          # no parents means first commit
+          if commits[sha][:parents].empty?
+            @head = sha
+            commits[sha][:branches] = ["master"]
+          end
 
-          if git_commit_object.parents.count > 0
-
-            git_commit_object.parents.each do |parent|                
+          git_commit_object.parents.each do |parent|                
+            
+            if commits.keys.include? parent.sha.slice(0..7)
+              commits[parent.sha.slice(0..7)][:children].push sha
+              commits[parent.sha.slice(0..7)][:children] = commits[parent.sha.slice(0..7)][:children].uniq
+              commits[parent.sha.slice(0..7)][:branches].push branch_name
+              commits[parent.sha.slice(0..7)][:branches] = commits[parent.sha.slice(0..7)][:branches].uniq
               
-              if commits.keys.include? parent.sha.slice(0..7)
-                commits[parent.sha.slice(0..7)][:children].push sha
-                commits[parent.sha.slice(0..7)][:children] = commits[parent.sha.slice(0..7)][:children].uniq
-                commits[parent.sha.slice(0..7)][:branches].push branch_name
-                commits[parent.sha.slice(0..7)][:branches] = commits[parent.sha.slice(0..7)][:branches].uniq
-                
-                # if commits[sha][:branches].count  == 1 && commits[parent.sha.slice(0..7)][:branches].include?(commits[sha][:branches].first)
-                #   commits[parent.sha.slice(0..7)][:new_branch] = true
-                # end
-                # If parent commit has More branches than current commit, the current commit starts a new branch
-                # if commits[parent.sha.slice(0..7)][:branches].count > commits[sha][:branches].count
-                #   commits[parent.sha.slice(0..7)][:new_branch] = true
-                # end
-              else
-                commits[parent.sha.slice(0..7)] = { message: parent.message, children: [sha], branches: [ branch_name], new_branch: false }
-              end
+              # if commits[sha][:branches].count  == 1 && commits[parent.sha.slice(0..7)][:branches].include?(commits[sha][:branches].first)
+              #   commits[parent.sha.slice(0..7)][:new_branch] = true
+              # end
+              # If parent commit has More branches than current commit, the current commit starts a new branch
+              # if commits[parent.sha.slice(0..7)][:branches].count > commits[sha][:branches].count
+              #   commits[parent.sha.slice(0..7)][:new_branch] = true
+              # end
+            else
+              commits[parent.sha.slice(0..7)] = { 
+                message: parent.message,
+                children: [sha],
+                branches: [ branch_name],
+                new_branch: false,
+                heads: [],
+                parents: []
+                }
             end
           end
         end
@@ -298,6 +333,65 @@ module WebGit
       #   end
       # end
       commits
+    end
+
+    # start from first commit, look at each child
+    # if child commit has more than one branch, find child branches
+    # the child commit belongs on the difference between its branches and its child branches
+    # Given one sha, find the branch the child was on
+    def find_child_branches(sha, commits)
+      children = commits[sha][:children]
+      child_branches = []
+      children.each do |child_sha|
+        child_branches += commits[child_sha][:branches]
+      end
+      child_branches
+    end
+
+    # I know the branch of a commit b/c either it's the HEAD of the branch or 
+    #   it has a child is unique to that branch — the child branch should be the same as current
+
+    # start from head commit
+    #  see children
+    def thing(commits)
+      new_commits = Marshal.load(Marshal.dump(commits))
+      puts "\n" * 3
+      p "________"
+      # first_commit = commits[@head]
+      commits.keys.each do |start|
+        first_commit = commits[start]
+        p start + " || ____"
+        first_commit[:children].each do |child_sha|
+          child_commit = commits[child_sha]
+          if child_commit[:branches].count > 1
+            # parent_branches = find_parent_branches(child_sha, commits)
+            # See if head
+            if !child_commit[:heads].empty?
+              p "parent: #{start}"
+              p "Sha: #{child_sha} - probably :: #{child_commit[:heads]}"
+              new_commits[start][:origin_branch] = child_commit[:heads]
+            else
+              # else find child with one branch, use that branch
+              child_commit[:children].each do |grand_child|
+                if commits[grand_child][:branches].count == 1
+                  p "new sha branch is: #{child_sha} - #{commits[grand_child][:branches].first}"
+                  new_commits[child_sha][:origin_branch] = commits[grand_child][:branches]
+                end
+              end
+              p "------------"
+            end
+          elsif !child_commit[:heads].empty? && (first_commit[:branches].count > 1)
+            newp = commits[start][:branches] - child_commit[:heads]
+            p "Sha: #{child_sha} - MAYBE :: #{newp}"
+            new_commits[start][:origin_branch] = newp
+          end
+        end
+        if first_commit[:children].empty?
+          p ",e,,"
+          new_commits[start][:origin_branch] = new_commits[start][:branches]
+        end
+      end
+      new_commits
     end
 
     def build_backwards
