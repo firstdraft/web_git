@@ -351,6 +351,23 @@ module WebGit
       child_branches
     end
 
+    def find_child_origin(sha, commits_hash)
+      commit = commits_hash[sha]
+      p "Sha - #{sha}"
+      children = commit[:children]
+      if children.count > 0
+        # if origin_branch.nil?
+        origin = ""
+        children.each do |child|
+          origin = find_child_origin(child, commits_hash)
+        end
+        return origin
+      else
+        origin_branch = commit[:origin_branch]
+        p "origin: /// " + origin_branch.first
+        return origin_branch.first
+      end
+    end
     # I know the branch of a commit b/c either it's the HEAD of the branch or 
     #   it has a child is unique to that branch — the child branch should be the same as current
 
@@ -361,6 +378,9 @@ module WebGit
       puts "\n" * 3
       p "________"
       # first_commit = commits[@head]
+      # order = commits.sort_by { |sha, object| object[:date] }.reverse
+      leftover_shas = commits.keys
+
       commits.keys.each do |start|
         first_commit = commits[start]
         p start + " || ____"
@@ -373,12 +393,14 @@ module WebGit
               p "parent: #{start}"
               p "Sha: #{child_sha} - probably :: #{child_commit[:heads]}"
               new_commits[start][:origin_branch] = child_commit[:heads]
+              leftover_shas.delete(start)
             else
               # else find child with one branch, use that branch
               child_commit[:children].each do |grand_child|
                 if commits[grand_child][:branches].count == 1
                   p "new sha branch is: #{child_sha} - #{commits[grand_child][:branches].first}"
                   new_commits[child_sha][:origin_branch] = commits[grand_child][:branches]
+                  leftover_shas.delete(child_sha)
                 end
               end
               p "------------"
@@ -387,15 +409,23 @@ module WebGit
             newp = commits[start][:branches] - child_commit[:heads]
             p "Sha: #{child_sha} - MAYBE :: #{newp}"
             new_commits[start][:origin_branch] = newp
+            leftover_shas.delete(start)
           end
         end
         if first_commit[:parents].empty?
           new_commits[start][:origin_branch] = ["master"]
+          leftover_shas.delete(start)
         end
         if first_commit[:children].empty?
           p ",e,,"
           new_commits[start][:origin_branch] = new_commits[start][:branches]
+          leftover_shas.delete(start)
         end
+      end
+      p "|||||///||||"
+      p leftover_shas
+      leftover_shas.each do |sha|
+        new_commits[sha][:origin_branch] = [find_child_origin(sha, new_commits)]
       end
       new_commits
     end

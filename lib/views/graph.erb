@@ -35,17 +35,12 @@
   // make commit
   // determine if any merge happens
   //    merge branches
-  <% count = 0 %>
+
   <% existing_branches = [] %>
-  <% existing_shas = [] %>
   <% commit_order.each do |sha| %>
     <% commit_info = commits_hash[sha] %>
-    <% commit_info %>
-    <% if count == 0 %>
-      const master = gitgraph.branch("master");
-      <% count = 1 %>
-      <% existing_branches.push "master" %>
-    <% end %>
+    <% p "_____++" %>
+    <% p commit_info %>
     <% branch = commit_info[:origin_branch].first.gsub("-", "_") %>
     <% if !existing_branches.include?(branch) %>
       const <%= branch %> = gitgraph.branch("<%=branch %>")
