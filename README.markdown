@@ -1,27 +1,6 @@
 # WebGit
 
-  <% commit_order.each do |sha| %>
-    <% commit_info = commits_hash[sha] %>
-    <% p "_____++" %>
-    <% p commit_info %>
-    <% branch = commit_info[:origin_branch].first.gsub("-", "_") %>
-    <% if !existing_branches.include?(branch) %>
-      const <%= branch %> = gitgraph.branch("<%=branch %>")
-      <% existing_branches.push branch %>
-    <% end %>
-    <%= branch %>.commit("<%= sha %>")
-    <% if commit_info[:parents].count > 1 %>
-      // Merge
-      <% commit_info[:parents].each do |parent_commit| %>
-        // find other branch that isn't current branch
-        <% other_branch = commits_hash[parent_commit][:origin_branch].first.gsub("-", "_") %>
-        <% if other_branch != branch %>
-          <%= other_branch %>.merge(<%= branch %>)
-          <% break %>
-        <% end %>
-      <% end %>
-    <% end %>
-  <% end %>
+
 An in-browser Git GUI for your Rails project.
 
 WebGit is a Rails Engine that provides an in-browser visual interface to a simple but effective Git workflow. For educational purposes.
