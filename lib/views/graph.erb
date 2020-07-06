@@ -1,0 +1,70 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gitgraph.js/1.11.4/gitgraph.min.js"></script>
+<canvas id="gitGraph"></canvas>
+<script>
+  var gitgraph = new GitGraph({
+    template: "metro", // or blackarrow
+    orientation: "vertical-reverse",
+    author: "John Doe",
+    mode: "extended" // or compact if you don't want the messages
+  });
+  
+  <% commits = @graph.generate_children %>
+  <% commits_hash = @graph.find_origin_branch(commits) %>
+  // @graph_hash.sort do |branch_a, branch_b|
+  //       branch_b[:log].last[:date] <=> branch_a[:log].last[:date]
+  //     end
+  <% commit_order = commits_hash.sort_by { |sha, object| object[:date] } %>
+  <% commit_order = commit_order.to_h.keys %>
+  // New branch when
+  //  commit has more than one child
+  //  child has different origin branch than current commits branches
+
+  // Merge when
+  //  commit has multiple parents
+  //  look at origin branches of each parent commit to find which branches to merge 
+
+
+  // for each sha
+  // get commit info
+  // determine branch
+  //  if first commit, then branch is master
+  //  else check origin branch
+  //    if not existing branch
+  //      create it, and add to existing branches
+  //    else just reference it
+  // make commit
+  // determine if any merge happens
+  //    merge branches
+  <% count = 0 %>
+  <% existing_branches = [] %>
+  <% existing_shas = [] %>
+  <% commit_order.each do |sha| %>
+    <% commit_info = commits_hash[sha] %>
+    <% commit_info %>
+    <% if count == 0 %>
+      const master = gitgraph.branch("master");
+      <% count = 1 %>
+      <% existing_branches.push "master" %>
+    <% end %>
+    <% branch = commit_info[:origin_branch].first.gsub("-", "_") %>
+    <% if !existing_branches.include?(branch) %>
+      const <%= branch %> = gitgraph.branch("<%=branch %>")
+      <% existing_branches.push branch %>
+    <% end %>
+    <%= branch %>.commit("<%= sha %>")
+    <% if commit_info[:parents].count > 1 %>
+      // Merge
+      <% commit_info[:parents].each do |parent_commit| %>
+        // find other branch that isn't current branch
+        <% other_branch = commits_hash[parent_commit][:origin_branch].first.gsub("-", "_") %>
+        <% if other_branch != branch %>
+          <%= other_branch %>.merge(<%= branch %>)
+          <% break %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+</script>
+<% commit_order %>
+<%= commits_hash %>

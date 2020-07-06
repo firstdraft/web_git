@@ -6,6 +6,7 @@ module WebGit
     require "action_view/helpers"
     include ActionView::Helpers::DateHelper
     attr_accessor :heads
+    attr_reader :head
     attr_reader :graph_order
     attr_reader :commit_order
 
@@ -265,6 +266,7 @@ module WebGit
               branches: [ branch_name ],
               new_branch: false,
               heads: [],
+              date: git_commit_object.date,
               parents: []
             }
           elsif !commits[sha][:branches].include? branch_name
@@ -312,6 +314,7 @@ module WebGit
                 branches: [ branch_name],
                 new_branch: false,
                 heads: [],
+                date: parent.date,
                 parents: []
                 }
             end
@@ -353,7 +356,7 @@ module WebGit
 
     # start from head commit
     #  see children
-    def thing(commits)
+    def find_origin_branch(commits)
       new_commits = Marshal.load(Marshal.dump(commits))
       puts "\n" * 3
       p "________"
@@ -385,6 +388,9 @@ module WebGit
             p "Sha: #{child_sha} - MAYBE :: #{newp}"
             new_commits[start][:origin_branch] = newp
           end
+        end
+        if first_commit[:parents].empty?
+          new_commits[start][:origin_branch] = ["master"]
         end
         if first_commit[:children].empty?
           p ",e,,"

@@ -41,8 +41,8 @@ module WebGit
       #   branch[:log] = log
       # end
 
-      commits = @graph.generate_children
-      @graph.thing(commits).to_json
+      # commits = @graph.generate_children
+      # @graph.find_origin_branch(commits).to_json
       # commits.to_json
       # @graph.build_backwards#.to_json
       # graph.to_hash.to_json
@@ -52,6 +52,7 @@ module WebGit
       # * 76eff73 - Wed, 11 Mar 2020 19:58:21 +0000 (13 days ago) (HEAD -> current_branch)
       #  | blease - Jelani Woods
       # erb :log
+      erb :graph
       # " * " + sha + " - " + commit_date + " (" + time_ago_in_words(commit_date) + ") " + "\n\t| " + commit.message 
     end
     
