@@ -261,66 +261,7 @@
               <% end%>            
             </form>
           </div>
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/gitgraph.js/1.11.4/gitgraph.min.js"></script>
           <canvas id="gitGraph"></canvas>
-          <script>
-            var gitgraph = new GitGraph({
-              template: "metro", // or blackarrow
-              orientation: "vertical-reverse",
-              author: "John Doe",
-              mode: "extended" // or compact if you don't want the messages
-            });
-            <% commits = @graph.to_array %>
-            <% commits.each_with_index do |commit, index| %>
-                //first <%= index %>
-              <% if index > 0 %>
-                //<%= index %>
-                <% previous_branches = commits.first(index)%>
-                <% if !previous_branches.map{|c| c[:branch_name]}.include?(commit[:branch_name]) %>
-                  let branch_<%= commit[:branch_name].gsub("-", "_") %> = gitgraph.branch("<%= commit[:branch_name] %>");
-                <% end %>
-              <% else%>
-                  let branch_<%= commit[:branch_name].gsub("-", "_") %> = gitgraph.branch("<%= commit[:branch_name] %>");
-              <% end %>
-              branch_<%= commit[:branch_name].gsub("-", "_") %>.commit({message: '<%= commit[:message].to_s.gsub("\n", " ") %>', author: "<%= commit[:author] %>", sha1: "<%= commit[:sha] %>"});
-              
-            <% end %>
-            // gitgraph.commit("My first commit"); // 1 commit upon HEAD
-            // var develop = gitgraph.branch("develop"); // New branch from HEAD
-            // var myfeature = develop.branch("myfeature"); // New branch from develop
-            // develop.commit("Develop a feature - part 1");
-            // develop.commit("Develop a feature - part 2");
-
-            // master.commit({message: "Fast bugfix", author: "John Fixer"});
-            // myfeature.commit({message: "New cool feature", author: "John Feature"});
-
-            // develop.merge(master);
-            // myfeature.merge(master);
-            // master.commit({message: "Release of version 0.1", tag: "0.1", author: "John Releaser", sha1: "abcdef0"});
-          </script>
-          <% @graph_branches.each do |branch_hash| %>
-            <h4 class="p-4"><%= branch_hash[:branch] %></h4>
-            <code class="bg-dark text-white p-3">
-              <% branch_hash[:log].reverse.each do |commit| %>
-              <div>
-                <span class="commit">
-                  <button class="btn btn-link sha"><%= commit[:sha] %></button>
-                </span>
-                — <%= commit[:date].strftime("%a, %d %b %Y, %H:%M %z") %> (<%= commit[:formatted_date] %> ago)
-                  <% heads = "(#{commit[:heads].join(", ")})" if !commit[:heads].empty? %>
-                  <% if commit[:heads].include? @current_branch %>
-                    <%= heads.gsub(@current_branch, '<span class="text-success">HEAD</span> --> ' + @current_branch) %>
-                  <% else %>
-                    <%= heads %>
-                  <% end %>
-                <div>
-                  &emsp; | <%= commit[:message] + " - " + commit[:author] %>
-                </div>
-              </div>
-              <% end %>
-            </code>
-            <hr>
-          <% end %>
         </div>
       </div>
     </div>
@@ -334,6 +275,52 @@
         });
     });
 
+  </script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/gitgraph.js/1.11.4/gitgraph.min.js"></script>
+  <script>
+    var gitgraph = new GitGraph({
+      template: "metro",
+      orientation: "vertical-reverse",
+      author: "John Doe",
+      mode: "extended"
+    });
+    gitgraph.canvas.addEventListener( "commit:mouseover", function ( event ){
+      document.getElementById("commit_hash").value = event.data.sha1
+    });
+    
+    <% commits = @graph.generate_children %>
+    <% commits_hash = @graph.find_origin_branch(commits) %>
+    
+    <% commit_order = commits_hash.sort_by { |sha, object| object[:date] } %>
+    <% commit_order = commit_order.to_h.keys %>
+
+    <% existing_branches = [] %>
+    <% commit_order.each do |sha| %>
+      <% commit_info = commits_hash[sha] %>
+      <% branch = commit_info[:origin_branch].first.gsub("-", "_") %>
+      <% if !existing_branches.include?(branch) %>
+        const <%= branch %> = gitgraph.branch("<%=branch %>")
+        <% existing_branches.push branch %>
+      <% end %>
+      <%# Determine if merge is necessary %>
+      <% if commit_info[:parents].count > 1 %>
+        <% commit_info[:parents].each do |parent_commit| %>
+          <% find other branch that isn't current branch %>
+          <% other_branch = commits_hash[parent_commit][:origin_branch].first.gsub("-", "_") %>
+          <% if other_branch != branch %>
+            <%= other_branch %>.merge(<%= branch %>, {
+              sha1: "<%= sha %>",
+              message: "<%= commit_info[:message].split("\n").first %>",
+              author: "<%= commit_info[:author] %>"
+            })
+            <% break %>
+          <% end %>
+        <% end %>
+      <%# when not a merge commit %>
+      <% else %>
+        <%= branch %>.commit({message: "<%= commit_info[:message].split("\n").first %>", sha1: "<%= sha %>", author: "<%= commit_info[:author] %>"})
+      <% end %>
+    <% end %>
   </script>
 </body>
 </html>

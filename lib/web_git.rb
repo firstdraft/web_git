@@ -133,7 +133,7 @@ module WebGit
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
       name = params.fetch(:branch_name).downcase.gsub(" ", "_")
-      commit = params.fetch(:commit_hash)
+      commit = params[:commit_hash]
       branches = g.branches.local.map(&:full)
       if branches.include?(name) || commit.nil? 
         g.branch(name).checkout

@@ -266,6 +266,7 @@ module WebGit
               branches: [ branch_name ],
               new_branch: false,
               heads: [],
+              author: git_commit_object.author.name,
               date: git_commit_object.date,
               parents: []
             }
@@ -314,6 +315,7 @@ module WebGit
                 branches: [ branch_name],
                 new_branch: false,
                 heads: [],
+                author: git_commit_object.author.name,
                 date: parent.date,
                 parents: []
                 }
