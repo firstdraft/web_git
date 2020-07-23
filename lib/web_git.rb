@@ -17,14 +17,42 @@ module WebGit
       @graph = WebGit::Graph.new(g)
       # graph.find_common_shas.to_json
       # graph.tree_traversal.to_json
-      @graph.build_backwards#.to_json
+      @git = g
+      # branches = @git.branches.local.map(&:name)
+      # branches.each do |branch_name|
+      #   branch = { name: branch_name }
+      #   p "Branch: #{branch_name}"
+      #   @git.checkout(branch_name)
+      #   log = []
+      #   @git.log.each do |git_commit_object|
+      #     sha = git_commit_object.sha.slice(0..7)
+      #     p "Commit - #{sha} - #{git_commit_object.message}"
+      #     if git_commit_object.parents.count > 0
+      #       p "Parents: " + git_commit_object.parents.count.to_s
+      #       # p git_commit_object.parents.first.sha
+      #       p "||||||||||||||"
+      #       git_commit_object.parents.each do |parent|                
+      #         p "Parent - #{parent.sha.slice(0..7)} - #{parent.message}"
+      #       end
+      #       p "_____________"
+      #     end
+      #     # log.push sha
+      #   end
+      #   branch[:log] = log
+      # end
+
+      # commits = @graph.generate_children
+      # @graph.find_origin_branch(commits).to_json
+      # commits.to_json
+      # @graph.build_backwards#.to_json
       # graph.to_hash.to_json
       #sha = commit.sha.slice(0..7)
       # commit_date = Date.parse commit.date
       # strftime("%a, %d %b %Y, %H:%M %z") -> time_ago_in_words(commit_date)
       # * 76eff73 - Wed, 11 Mar 2020 19:58:21 +0000 (13 days ago) (HEAD -> current_branch)
       #  | blease - Jelani Woods
-      erb :log
+      # erb :log
+      erb :graph
       # " * " + sha + " - " + commit_date + " (" + time_ago_in_words(commit_date) + ") " + "\n\t| " + commit.message 
     end
     
@@ -71,10 +99,10 @@ module WebGit
       # g.branches[:master].gcommit
 
       @graph = WebGit::Graph.new(g)
-      @graph_hash = @graph.to_hash
-      @graph_branches = @graph_hash.sort do |branch_a, branch_b|
-        branch_b[:log].last[:date] <=> branch_a[:log].last[:date]
-      end
+      # @graph_hash = @graph.to_hash
+      # @graph_branches = @graph_hash.sort do |branch_a, branch_b|
+      #   branch_b[:log].last[:date] <=> branch_a[:log].last[:date]
+      # end
 
       erb :status
     end
@@ -105,7 +133,7 @@ module WebGit
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
       name = params.fetch(:branch_name).downcase.gsub(" ", "_")
-      commit = params.fetch(:commit_hash)
+      commit = params[:commit_hash]
       branches = g.branches.local.map(&:full)
       if branches.include?(name) || commit.nil? 
         g.branch(name).checkout
