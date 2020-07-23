@@ -305,7 +305,7 @@
       <%# Determine if merge is necessary %>
       <% if commit_info[:parents].count > 1 %>
         <% commit_info[:parents].each do |parent_commit| %>
-          <% find other branch that isn't current branch %>
+          <%# find other branch that isn't current branch %>
           <% other_branch = commits_hash[parent_commit][:origin_branch].first.gsub("-", "_") %>
           <% if other_branch != branch %>
             <%= other_branch %>.merge(<%= branch %>, {

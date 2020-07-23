@@ -99,10 +99,10 @@ module WebGit
       # g.branches[:master].gcommit
 
       @graph = WebGit::Graph.new(g)
-      @graph_hash = @graph.to_hash
-      @graph_branches = @graph_hash.sort do |branch_a, branch_b|
-        branch_b[:log].last[:date] <=> branch_a[:log].last[:date]
-      end
+      # @graph_hash = @graph.to_hash
+      # @graph_branches = @graph_hash.sort do |branch_a, branch_b|
+      #   branch_b[:log].last[:date] <=> branch_a[:log].last[:date]
+      # end
 
       erb :status
     end
