@@ -96,7 +96,7 @@
 
                     <div class="card-body">
                       <%= button_to commits_stash_url, class: "btn btn-danger btn-block", method: :post, data: { confirm: "Are you sure you want to discard these changes?", toggle: "tooltip", html: true }, title: "<code>git add -A; git stash</code>" do %>
-                        <%= octicon "trashcan", class: "mr-1" %>
+                        <%= octicon "trash", class: "mr-1" %>
 
                         Discard all changes
                       <% end %>
@@ -194,7 +194,7 @@
                     <div class="btn-group">
                       <%= link_to octicon("git-compare"), branch_url(name: branch), class: "btn btn-primary btn-sm", title: "Switch to branch<br><code>git checkout #{branch}</code>", data: { toggle: "tooltip", html: true } %>
 
-                      <%= link_to octicon("trashcan"), branch_url(name: branch), method: :delete, class: "btn btn-warning btn-sm", data: { toggle: "tooltip", confirm: "Are you sure you want to delete #{branch}?" }, title: "Delete branch #{branch}" %>
+                      <%= link_to octicon("trash"), branch_url(name: branch), method: :delete, class: "btn btn-warning btn-sm", data: { toggle: "tooltip", confirm: "Are you sure you want to delete #{branch}?" }, title: "Delete branch #{branch}" %>
                     </div>
                   </li>
                 <% end %>
