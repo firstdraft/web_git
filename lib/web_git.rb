@@ -131,12 +131,8 @@ module WebGit
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       g = Git.open(working_dir)
       # TODO push to heroku eventually, multiple remotes
-      # remote = params[:remote]
-      # unless remote.nil?
-      #   remote = g.remote remote
-      #   g.push remote
-      # end
-      g.push
+
+      g.push('origin', g.current_branch)
       redirect to("/")
     end
 

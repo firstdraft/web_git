@@ -24,7 +24,7 @@ GEM
     erubi (1.8.0)
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
-    git (1.7.0)
+    git (1.8.1)
       rchardet (~> 1.8)
     github_api (0.18.2)
       addressable (~> 2.4)
