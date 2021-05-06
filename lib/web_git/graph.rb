@@ -28,6 +28,31 @@ module WebGit
       @full_list
     end
 
+    def self.project_root
+      if defined?(Rails)
+        return Rails.root
+      end
+    
+      if defined?(Bundler)
+        return Bundler.root
+      end
+    
+      Dir.pwd
+    end
+
+    def cli_graph
+      Dir.chdir(Graph.project_root) do
+        @cli_graph = `git log --oneline --decorate --graph --all`
+        all_commits = `git log  --all --format=format:%H`.split("\n").map{|a| a.slice(0,7)}
+
+        all_commits.each do |sha|
+          sha_button = "<span class=\"commit\"><button class=\"btn btn-link sha\">#{sha}</button></span>"
+          @cli_graph.gsub!(sha, sha_button)
+        end
+      end
+      @cli_graph
+    end
+
     def has_untracked_changes?
       @git.diff.size > 0
     end
