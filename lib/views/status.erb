@@ -18,9 +18,9 @@
 </head>
 <body>
   <div class="container mt-3">
-    <% if !@alert.nil? || !@notice.nil? %>
-      <div class="row">
-        <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-12">
+        <% if !@notice.nil? %>
           <div class="alert alert-success alert-dismissable" role="alert">
             <%= @notice %>
 
@@ -28,6 +28,7 @@
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
+        <% elsif !@alert.nil? %>
 
           <div class="alert alert-warning alert-dismissable" role="alert">
             <%= @alert %>
@@ -36,9 +37,9 @@
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-        </div>
+        <% end %>
       </div>
-    <% end %>
+    </div>
     <div class="row mb-4">
       <div class="col">
         <div class="card">
