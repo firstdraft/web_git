@@ -292,9 +292,12 @@
 
     $(document).ready(function() {
         $(".sha").click(function() {
-          let text = this.textContent
+          var text = this.textContent
           $("#commit_hash").val(text);
         });
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip()
+        })
     });
 
   </script>
