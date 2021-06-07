@@ -2,6 +2,7 @@
 require "web_git/version"
 
 module WebGit
+  require "active_support"
   require "web_git/diff"
   require "web_git/graph"
   require "web_git/string"
