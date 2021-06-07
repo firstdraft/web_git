@@ -70,6 +70,7 @@ module WebGit
 
       graph = WebGit::Graph.new(git)
       @graph_hash = graph.to_hash
+      @cli_graph_interactive = graph.cli_graph
       @graph_branches = @graph_hash.sort do |branch_a, branch_b|
         branch_b[:log].last[:date] <=> branch_a[:log].last[:date]
       end
