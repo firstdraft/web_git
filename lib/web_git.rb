@@ -2,6 +2,7 @@
 require "web_git/version"
 
 module WebGit
+  require "active_support"
   require "web_git/diff"
   require "web_git/graph"
   require "web_git/string"
@@ -9,12 +10,10 @@ module WebGit
   require "date"
   require "git"
   class Server < Sinatra::Base
+    enable :sessions
 
     get '/log' do
-      working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
-      g = Git.open(working_dir)
-      
-      graph = WebGit::Graph.new(g)
+      graph = WebGit::Graph.new(git)
       graph.to_hash.to_json
       #sha = commit.sha.slice(0..7)
       # commit_date = Date.parse commit.date
@@ -24,15 +23,15 @@ module WebGit
 
       # " * " + sha + " - " + commit_date + " (" + time_ago_in_words(commit_date) + ") " + "\n\t| " + commit.message 
     end
-    
+
     get "/" do
-      working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
-      g = Git.open(working_dir)
+      initialize_flash
+      clear_flash
       # Update git index
-      g.status.changed.each do
-        g.diff.entries
+      git.status.changed.each do
+        git.diff.entries
       end
-      status = g.status
+      status = git.status
       # Just need the file names
       @changed_files = status.changed.keys
       @deleted_files = status.added.keys
@@ -46,30 +45,30 @@ module WebGit
         { name: "Added Files:", file_list: @added_files }
       ]
       
-      @current_branch = g.current_branch
+      @current_branch = git.current_branch
       # g.branch(@current_branch).checkout # maybe?
       @status = `git status`
-      @diff = g.diff
-      @diff = Diff.diff_to_html(g.diff.to_s)
+      @diff = git.diff
+      @diff = Diff.diff_to_html(git.diff.to_s)
       last_diff = nil
-      if g.log.count > 1
-        last_diff = g.diff(g.log[1], "HEAD").to_s + "\n"
+      if git.log.count > 1
+        last_diff = git.diff(git.log[1], "HEAD").to_s + "\n"
       end
       # @last_diff_html = Diff.last_to_html(last_diff)
       @last_diff_html = last_diff
-      @branches = g.branches.local.map(&:full)
+      @branches = git.branches.local.map(&:full)
       
-      logs = g.log
+      logs = git.log
       @last_commit_message = logs.first.message
-      @head = g.show.split("\n").first.split[1].slice(0..7)
+      @head = git.show.split("\n").first.split[1].slice(0..7)
       @list = []
       # (HEAD -> jw-non-sweet)
       # TODO show where branches are on different remotes
       @remotes = g.remotes.map {|remote| "#{remote.name}: #{remote.url}"  }
       # (origin/master, origin/jw-non-sweet, origin/HEAD)
-      # g.branches[:master].gcommit
+      # git.branches[:master].gcommit
 
-      graph = WebGit::Graph.new(g)
+      graph = WebGit::Graph.new(git)
       @graph_hash = graph.to_hash
       @graph_branches = @graph_hash.sort do |branch_a, branch_b|
         branch_b[:log].last[:date] <=> branch_a[:log].last[:date]
@@ -77,71 +76,115 @@ module WebGit
 
       erb :status
     end
-    
+
     post "/commit" do
       title = params[:title]
       description = params[:description]
-      working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
-      g = Git.open(working_dir)
-      g.add(:all => true)  
+
+      # TODO validate commit message
+      if title.nil? || title.gsub(" ", "").length == 0
+        session[:alert] = "You need to make a commit message."
+        redirect to("/")
+      end
+
       unless description.nil?
         title += "\n#{description}"
       end
-      g.commit(title)
+
+      safe_git_action(:commit, args: title, notice: "Commit created successfully", alert: "Failed to create commit")
       redirect to("/")
     end
-    
+
     get "/stash" do
-      working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
-      g = Git.open(working_dir)
-      g.add(:all=>true)
-      stash_count = Git::Stashes.new(g).count
-      Git::Stash.new(g, "Stash #{stash_count}")
+      safe_git_action(:stash, notice: "Changes stashed.", alert: "Failed to stash changes")
       redirect to("/")
     end
-    
+
     post "/branch/checkout/new" do
-      working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
-      g = Git.open(working_dir)
+      # TODO validate branch name
       name = params.fetch(:branch_name).downcase.gsub(" ", "_")
       commit = params.fetch(:commit_hash)
-      g.branch(name).checkout
-      g.reset_hard(g.gcommit(commit))
+
+      safe_git_action(:checkout, args: name, notice: "Branch #{name}, created successfully.", alert: "Failed to create branch")
+      safe_git_action(:reset_hard, args: commit, alert: "Failed to checkout branch at #{commit}")
       redirect to("/")
     end
-    
+
     post "/branch/checkout" do
-      working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
-      g = Git.open(working_dir)
       name = params.fetch(:branch_name).downcase.gsub(" ", "_")
-      g.branch(name).checkout
-      
+
+      safe_git_action(:checkout, args: name, notice: "Switched to branch: #{name} successfully.", alert: "Failed to switch branch")
       redirect to("/")
     end
-    
+
     # TODO make delete request somehow with the links
     post "/branch/delete" do
-      working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
-      g = Git.open(working_dir)
       name = params.fetch(:branch_name).downcase.gsub(" ", "_")
-      g.branch(name).delete
+
+      safe_git_action(:delete, args: name, notice: "Deleted branch: #{name} successfully.", alert: "Failed to delete branch")
       redirect to("/")
     end
 
     post "/push" do
-      working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
-      g = Git.open(working_dir)
       # TODO push to heroku eventually, multiple remotes
 
-      g.push('origin', g.current_branch)
+      safe_git_action(:push, notice: "Pushed to GitHub successfully.", alert: "Failed to push")
       redirect to("/")
     end
 
     post "/pull" do
-      working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
-      g = Git.open(working_dir)
-      g.pull
+      safe_git_action(:pull, notice: "Pulled successfully.", alert: "Git Pull failed")
       redirect to("/")
+    end
+
+    protected
+
+    def git
+      working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
+      @git ||= Git.open(working_dir)
+    end
+
+    def safe_git_action(method, **options)
+      begin
+        case method
+        when :push
+          git.push('origin', git.current_branch)
+        when :pull
+          git.pull
+        when :stash
+          git.add(all: true)
+          stash_count = Git::Stashes.new(git).count
+          Git::Stash.new(git, "Stash #{stash_count}")
+        when :commit
+          git.add(all: true)  
+          git.commit(options[:args])
+        when :checkout
+          git.branch(options[:args]).checkout
+        when :reset_hard
+          commit = git.gcommit(options[:args])
+          git.reset_hard(commit)
+        when :delete
+          git.branch(options[:args]).delete          
+        end
+        set_flash(:notice, options[:notice])
+      rescue Git::GitExecuteError => exception
+        alert_message = "#{options[:alert]}: #{exception.message.split("\n").last}"
+        set_flash(:alert, alert_message)
+      end
+    end
+
+    def set_flash(name, message)
+      session[name] = message
+    end
+
+    def clear_flash
+      session[:alert] = nil
+      session[:notice] = nil
+    end
+
+    def initialize_flash
+      @alert = session[:alert]
+      @notice = session[:notice]
     end
   end
 end

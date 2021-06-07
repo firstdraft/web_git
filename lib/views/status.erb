@@ -18,6 +18,28 @@
 </head>
 <body>
   <div class="container mt-3">
+    <div class="row">
+      <div class="col-md-12">
+        <% if @notice.present? %>
+          <div class="alert alert-success alert-dismissable" role="alert">
+            <%= @notice %>
+
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        <% elsif @alert.present? %>
+
+          <div class="alert alert-warning alert-dismissable" role="alert">
+            <%= @alert %>
+
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        <% end %>
+      </div>
+    </div>
     <div class="row mb-4">
       <div class="col">
         <div class="card">
