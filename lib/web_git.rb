@@ -65,6 +65,7 @@ module WebGit
       @list = []
       # (HEAD -> jw-non-sweet)
       # TODO show where branches are on different remotes
+      @remotes = g.remotes.map {|remote| "#{remote.name}: #{remote.url}"  }
       # (origin/master, origin/jw-non-sweet, origin/HEAD)
       # g.branches[:master].gcommit
 
