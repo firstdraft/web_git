@@ -29,7 +29,7 @@ module WebGit
     end
 
     def self.project_root
-      if defined?(Rails)
+      if defined?(Rails) && Rails.respond_to?("root")
         return Rails.root
       end
     
