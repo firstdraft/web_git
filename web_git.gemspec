@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "lib/generators/web_git/install_generator.rb",
+    "lib/scripts/heroku_login.exp",
     "lib/views/status.erb",
     "lib/web_git.rb",
     "lib/web_git/diff.rb",

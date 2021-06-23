@@ -16,6 +16,14 @@
     .commit:hover {
       color: red;
     }
+    .heroku {
+      background-color: #7952b3;
+    }
+    .btn-outline-heroku {
+      color: #7952b3;
+      border-color: #7952b3;
+      background-color: #fff;
+    }
   </style>
   <title>Git Client</title>
 </head>
@@ -157,9 +165,8 @@
                     </div>
                       <%= @remotes.first %>
                   </h6>
-                  <!-- TODO use git gem for status -->
                   <pre><%= @status %></pre>
-                  
+                  <%# TODO why is this here? %>
                   <% if @current_branch != "master" %>
                     <form action="/git/push" method="post">
                       <button type="submit" class="btn btn-primary btn-block mb-4" data-html="true" data-toggle="tooltip" data-placement="top" title="<code>git push</code>">
@@ -202,6 +209,30 @@
 
                 <div class="col">
                   <ul class="list-group">
+                    <li class="list-group-item heroku text-white d-flex justify-content-between">
+                      <span>Heroku</span>
+                      <% if @heroku_auth.empty? %>
+                      <a class="btn btn-outline-heroku" data-toggle="collapse" href="#herokuForm" role="button" aria-expanded="false" aria-controls="herokuForm">
+                        Sign in <i class="fas fa-sign-in-alt"></i>
+                      </a>
+                      <% else %>
+                        <span><%= @heroku_auth %></span>
+                      <% end %>
+                    </li>
+                    <li class="list-group-item collapse" id="herokuForm">
+                      <form action="/git/heroku/login" method="post">
+                        <div class="form-group">
+                          <label for="heroku_email">Email address</label>
+                          <input type="email" class="form-control" name="heroku_email" id="heroku_email" aria-describedby="emailHelp">
+                        </div>
+                        <div class="form-group">
+                          <label for="heroku_password">Password</label>
+                          <input type="password" class="form-control" name="heroku_password" id="heroku_password">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Sign in</button>
+                      </form>
+                    </li>
+
                     <li class="list-group-item list-group-item-success">
                       New Branch
                     </li>

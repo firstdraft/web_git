@@ -5,6 +5,7 @@ module WebGit
   require "active_support"
   require "web_git/diff"
   require "web_git/graph"
+  require "web_git/heroku"
   require "web_git/string"
   require "sinatra"
   require "date"
@@ -47,6 +48,7 @@ module WebGit
       
       @current_branch = git.current_branch
       # g.branch(@current_branch).checkout # maybe?
+      # TODO use git gem for status
       @status = `git status`
       @diff = git.diff
       @diff = Diff.diff_to_html(git.diff.to_s)
@@ -74,6 +76,8 @@ module WebGit
         branch_b[:log].last[:date] <=> branch_a[:log].last[:date]
       end
 
+      # TODO heroku stuff
+      @heroku_auth = WebGit::Heroku.whoami
       erb :status
     end
 
@@ -134,6 +138,19 @@ module WebGit
 
     post "/pull" do
       safe_git_action(:pull, notice: "Pulled successfully.", alert: "Git Pull failed")
+      redirect to("/")
+    end
+
+    post "/heroku/login" do
+      # TODO ensure required fields
+      email = params[:heroku_email]
+      password = params[:heroku_password]
+
+      WebGit::Heroku.authenticate(email, password)
+
+      # TODO actually handle these
+      set_flash(:notice, "Successfully logged into Heroku.")
+      set_flash(:alert, "Failed to log in to Heroku successfully.")
       redirect to("/")
     end
 
