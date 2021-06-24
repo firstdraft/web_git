@@ -142,15 +142,15 @@ module WebGit
     end
 
     post "/heroku/login" do
-      # TODO ensure required fields
       email = params[:heroku_email]
       password = params[:heroku_password]
 
-      WebGit::Heroku.authenticate(email, password)
-
-      # TODO actually handle these
-      set_flash(:notice, "Successfully logged into Heroku.")
-      set_flash(:alert, "Failed to log in to Heroku successfully.")
+      begin
+        WebGit::Heroku.authenticate(email, password)
+        set_flash(:notice, "Successfully logged into Heroku.")
+      rescue => exception
+        set_flash(:alert, "Failed to log in to Heroku successfully. #{exception.message}")
+      end
       redirect to("/")
     end
 
