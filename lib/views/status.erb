@@ -212,8 +212,7 @@
                     <li class="list-group-item heroku text-white d-flex justify-content-between">
                       <span>Heroku</span>
                       <% if @heroku_auth.empty? %>
-                      <a class="btn btn-outline-heroku" data-html="true" data-toggle="tooltip"
-                          data-placement="top" title="<code>heroku login -i</code>" data-toggle="collapse" href="#herokuForm" role="button" aria-expanded="false" aria-controls="herokuForm">
+                      <a class="btn btn-outline-heroku" data-toggle="collapse" href="#herokuForm" role="button" aria-expanded="false" aria-controls="herokuForm">
                         Sign in <i class="fas fa-sign-in-alt"></i>
                       </a>
                       <% else %>
@@ -230,7 +229,8 @@
                           <label for="heroku_password">Password</label>
                           <input type="password" class="form-control" name="heroku_password" id="heroku_password">
                         </div>
-                        <button type="submit" class="btn btn-primary">Sign in</button>
+                        <button type="submit" data-html="true" data-toggle="tooltip"
+                          data-placement="top" title="<code>heroku login -i</code>" class="btn btn-primary">Sign in</button>
                       </form>
                     </li>
 
