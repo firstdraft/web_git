@@ -5,7 +5,7 @@ module WebGit
       `#{script} #{email} #{password}`
     end
 
-    def whoami
+    def self.whoami
       `heroku whoami`.chomp
     end
   end
