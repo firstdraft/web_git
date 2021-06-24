@@ -33,6 +33,7 @@ Gem::Specification.new do |s|
     "lib/views/status.erb",
     "lib/web_git.rb",
     "lib/web_git/diff.rb",
+    "lib/web_git/exceptions.rb",
     "lib/web_git/graph.rb",
     "lib/web_git/string.rb",
     "lib/web_git/version.rb",
