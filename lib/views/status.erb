@@ -208,79 +208,92 @@
                 </div>
 
                 <div class="col">
-                  <ul class="list-group">
-                    <li class="list-group-item heroku text-white d-flex justify-content-between">
-                      <span>Heroku</span>
-                      <% if @heroku_auth.empty? %>
-                      <a class="btn btn-outline-heroku" data-toggle="collapse" href="#herokuForm" role="button" aria-expanded="false" aria-controls="herokuForm">
-                        Sign in <i class="fas fa-sign-in-alt"></i>
-                      </a>
-                      <% else %>
-                        <span><%= @heroku_auth %></span>
-                      <% end %>
+                  <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                      <a class="nav-link active" id="git-tab" href="#git">Git</a>
                     </li>
-                    <li class="list-group-item collapse" id="herokuForm">
-                      <form action="/git/heroku/login" method="post">
-                        <div class="form-group">
-                          <label for="heroku_email">Email address</label>
-                          <input type="email" class="form-control" name="heroku_email" id="heroku_email" aria-describedby="emailHelp">
-                        </div>
-                        <div class="form-group">
-                          <label for="heroku_password">Password</label>
-                          <input type="password" class="form-control" name="heroku_password" id="heroku_password">
-                        </div>
-                        <button type="submit" data-html="true" data-toggle="tooltip"
-                          data-placement="top" title="<code>heroku login -i</code>" class="btn btn-primary">Sign in</button>
-                      </form>
+                    <li class="nav-item">
+                      <a class="nav-link" id="heroku-tab" href="#heroku">Heroku</a>
                     </li>
-
-                    <li class="list-group-item list-group-item-success">
-                      New Branch
-                    </li>
-
-                    <li class="list-group-item">
-                      <form action="/git/branch/checkout" method="post">
-                        <div class="form-group">
-                          <label for="branch_name">
-                            Go ahead, experiment!
-                          </label>
-                          <input
-                            id="branch_name" class="form-control" type="text"
-                            name="branch_name" required
-                            placeholder="Enter a name for the new branch..."  
-                          >
-                        </div>
-                        <button class="btn btn-success btn-block"
-                          data-html="true" data-toggle="tooltip"
-                          data-placement="top" title="<code>git checkout -b [BRANCH NAME]</code>"
-                        >
-                          <i class="fas fa-code-branch mr-1"></i>
-                          Create branch
-                        </button>
-                      </form>
-                    </li>
-                    <li class="list-group-item list-group-item-info">
-                      Existing branches
-                    </li>
-                    <% @branches.each do |branch| %>
-                      <li class="list-group-item  justify-content-between">
-                        <%= branch %>
-                        <div class="btn-group">
-                          <!-- TODO method post, pass branch name-->
-                          <form action="/git/branch/checkout" method="post">
-                            <button value="<%= branch %>" name="branch_name" type="submit" class="btn btn-primary btn-sm" data-html="true" data-toggle="tooltip" data-placement="top" title="<code>git checkout <%= branch %></code>">
-                             <i class="fas fa-exchange-alt"></i>
-                            </button>
-                          </form>
-                          <form action="/git/branch/delete" method="post">
-                            <button type="submit" value="<%= branch %>" name="branch_name" class="btn btn-warning btn-sm" data-html="true" data-toggle="tooltip" data-placement="top" title="<code>git branch -d <%= branch %></code>">
-                             <i class="far fa-trash-alt"></i>
-                            </button>
-                          </form>
-                        </div>
-                      </li>
-                    <% end %>
                   </ul>
+                  <div class="tab-content">
+                    <div class="tab-pane active" id="git" role="tabpanel" aria-labelledby="profile-tab">
+                      <ul class="list-group">
+                        <li class="list-group-item list-group-item-success">
+                          New Branch
+                        </li>
+
+                        <li class="list-group-item">
+                          <form action="/git/branch/checkout" method="post">
+                            <div class="form-group">
+                              <label for="branch_name">
+                                Go ahead, experiment!
+                              </label>
+                              <input
+                                id="branch_name" class="form-control" type="text"
+                                name="branch_name" required
+                                placeholder="Enter a name for the new branch..."
+                              >
+                            </div>
+                            <button class="btn btn-success btn-block"
+                              data-html="true" data-toggle="tooltip"
+                              data-placement="top" title="<code>git checkout -b [BRANCH NAME]</code>"
+                            >
+                              <i class="fas fa-code-branch mr-1"></i>
+                              Create branch
+                            </button>
+                          </form>
+                        </li>
+                        <li class="list-group-item list-group-item-info">
+                          Existing branches
+                        </li>
+                        <% @branches.each do |branch| %>
+                          <li class="list-group-item  justify-content-between">
+                            <%= branch %>
+                            <div class="btn-group">
+                              <!-- TODO method post, pass branch name-->
+                              <form action="/git/branch/checkout" method="post">
+                                <button value="<%= branch %>" name="branch_name" type="submit" class="btn btn-primary btn-sm" data-html="true" data-toggle="tooltip" data-placement="top" title="<code>git checkout <%= branch %></code>">
+                                  <i class="fas fa-exchange-alt"></i>
+                                </button>
+                              </form>
+                              <form action="/git/branch/delete" method="post">
+                                <button type="submit" value="<%= branch %>" name="branch_name" class="btn btn-warning btn-sm" data-html="true" data-toggle="tooltip" data-placement="top" title="<code>git branch -d <%= branch %></code>">
+                                  <i class="far fa-trash-alt"></i>
+                                </button>
+                              </form>
+                            </div>
+                          </li>
+                        <% end %>
+                      </ul>
+                    </div>
+                    <div class="tab-pane" id="heroku" role="tabpanel" aria-labelledby="home-tab">
+                      <ul class="list-group">
+                        <li class="list-group-item heroku text-white d-flex justify-content-between">
+                          <span>Heroku</span>
+                          <% if !@heroku_auth.empty? %>
+                            <span><%= @heroku_auth %></span>
+                          <% end %>
+                        </li>
+                        <% if @heroku_auth.empty? %>
+                          <li class="list-group-item" id="herokuForm">
+                            <form action="/git/heroku/login" method="post">
+                              <div class="form-group">
+                                <label for="heroku_email">Email address</label>
+                                <input type="email" class="form-control" name="heroku_email" id="heroku_email" aria-describedby="emailHelp">
+                              </div>
+                              <div class="form-group">
+                                <label for="heroku_password">Password</label>
+                                <input type="password" class="form-control" name="heroku_password" id="heroku_password">
+                              </div>
+                              <button type="submit" data-html="true" data-toggle="tooltip"
+                                data-placement="top" title="<code>heroku login -i</code>" class="btn btn-primary">Sign in</button>
+                            </form>
+                          </li>
+                        <% end %>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
             <% end %>
@@ -339,6 +352,10 @@
         });
         $(function () {
           $('[data-toggle="tooltip"]').tooltip()
+        })
+        $('.nav-tabs a').on('click', function (event) {
+          event.preventDefault()
+          $(this).tab('show')
         })
     });
 

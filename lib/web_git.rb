@@ -149,7 +149,7 @@ module WebGit
         WebGit::Heroku.authenticate(email, password)
         set_flash(:notice, "Successfully logged into Heroku.")
       rescue => exception
-        set_flash(:alert, "Failed to log in to Heroku successfully. #{exception.message}")
+        set_flash(:alert, "There was a problem logging into Heroku. #{exception.message}")
       end
       redirect to("/")
     end
