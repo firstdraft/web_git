@@ -115,7 +115,7 @@
     end
 
     def self.get_last_left(diff)
-      filenames = get_file_names(get_last_commit_hash)
+      filenames = get_file_names("HEAD~1")
       files = file_diffs(diff)
       ones = {}
       files.each_with_index do |file, i|
@@ -139,7 +139,7 @@
     end
 
     def self.get_last_right(diff)
-      filenames = get_file_names(get_last_commit_hash)
+      filenames = get_file_names("HEAD~1")
       files = file_diffs(diff)
       ones = {}
       files.each_with_index do |file, i|

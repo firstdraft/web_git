@@ -191,8 +191,7 @@
                   </a>
 
                   <div id="latest_diff_html" class="collapse">
-                    <iframe srcdoc="<%= @last_diff_html %>" width="100%" height="400" class="mb-3">
-                    </iframe>
+                    <%= erb :last_commit, locals: { diff: @last_diff_html } %>
                   </div>
                 </div>
 
