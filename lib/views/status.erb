@@ -191,7 +191,9 @@
                   </a>
 
                   <div id="latest_diff_html" class="collapse">
-                    <%= erb :last_commit, locals: { diff: @last_diff_html } %>
+                    <pre>
+                      <%= diff %>
+                    </pre>
                   </div>
                 </div>
 
