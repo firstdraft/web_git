@@ -174,12 +174,13 @@
       html_output += '</style>'
       html_output += '<div class="card" style="overflow-y: scroll;max-height:400px">'
       left_hash.keys.each do |file|
-        html_output += '<div class="file mb-4 p-3">'
+        html_output += '<div class="file mb-4 p-1">'
         html_output += '<h4>' + file + '</h4>'
         html_output += Diffy::Diff.new(
           left_hash[file],
           right_hash[file],
-          :include_plus_and_minus_in_html => true
+          :include_plus_and_minus_in_html => true,
+          :allow_empty_diff => false
         ).to_s(:html)
         html_output += '</div>'
       end
