@@ -52,10 +52,9 @@ module WebGit
       @diff = Diff.diff_to_html(git.diff.to_s)
       last_diff = nil
       if git.log.count > 1
-        last_diff = git.diff(git.log[1], "HEAD").to_s + "\n"
+        last_diff = git.diff("HEAD~1", "HEAD").to_s + "\n"
       end
-      # @last_diff_html = Diff.last_to_html(last_diff)
-      @last_diff_html = last_diff
+      @last_diff_html = Diff.last_to_html(last_diff)
       @branches = git.branches.local.map(&:full)
       
       logs = git.log
