@@ -19,10 +19,25 @@
     .heroku {
       background-color: #7952b3;
     }
+
+    .btn-heroku {
+      color: #fff;
+      background-color: #7952b3;
+      border-color: #7952b3;
+    }
+
+    .btn-heroku:hover {
+      color: #fff;
+      background-color: #614092;
+      border-color: #6d48a4;
+    }
     .btn-outline-heroku {
       color: #7952b3;
       border-color: #7952b3;
       background-color: #fff;
+    }
+    .border-heroku {
+      border-color: #7952b3 !important;
     }
   </style>
   <title>Git Client</title>
@@ -216,7 +231,7 @@
                       <a class="nav-link" id="heroku-tab" href="#heroku">Heroku</a>
                     </li>
                   </ul>
-                  <div class="tab-content">
+                  <div class="tab-content pt-2">
                     <div class="tab-pane active" id="git" role="tabpanel" aria-labelledby="profile-tab">
                       <ul class="list-group">
                         <li class="list-group-item list-group-item-success">
@@ -270,13 +285,15 @@
                     <div class="tab-pane" id="heroku" role="tabpanel" aria-labelledby="home-tab">
                       <ul class="list-group">
                         <li class="list-group-item heroku text-white d-flex justify-content-between">
-                          <span>Heroku</span>
-                          <% if !@heroku_auth.empty? %>
+                          <% if @heroku_auth.empty? %>
+                            <span>Log in</span>
+                          <% else %>
+                            <span>Logged in as:</span>
                             <span><%= @heroku_auth %></span>
                           <% end %>
                         </li>
                         <% if @heroku_auth.empty? %>
-                          <li class="list-group-item" id="herokuForm">
+                          <div class="border border-heroku p-4">
                             <form action="/git/heroku/login" method="post">
                               <div class="form-group">
                                 <label for="heroku_email">Email address</label>
@@ -287,9 +304,10 @@
                                 <input type="password" class="form-control" name="heroku_password" id="heroku_password">
                               </div>
                               <button type="submit" data-html="true" data-toggle="tooltip"
-                                data-placement="top" title="<code>heroku login -i</code>" class="btn btn-primary">Sign in</button>
+                                data-placement="top" title="<code>heroku login -i</code>" class="btn btn-heroku btn-block">Log in</button>
                             </form>
-                          </li>
+                          </div>
+
                         <% end %>
                       </ul>
                     </div>
