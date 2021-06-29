@@ -172,7 +172,7 @@
       html_output += '<style>'
       html_output += Diffy::CSS
       html_output += '</style>'
-      html_output += '<div class="card">'
+      html_output += '<div class="card" style="overflow-y: scroll;max-height:400px">'
       left_hash.keys.each do |file|
         html_output += '<div class="file mb-4 p-3">'
         html_output += '<h4>' + file + '</h4>'
