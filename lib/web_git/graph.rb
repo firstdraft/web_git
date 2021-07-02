@@ -1,5 +1,6 @@
 module WebGit
   require "git"
+  require "ansispan"
   
   class Graph
     require "action_view"
@@ -42,9 +43,10 @@ module WebGit
 
     def cli_graph
       Dir.chdir(Graph.project_root) do
-        @cli_graph = `git log --oneline --decorate --graph --all`
+        @cli_graph = `git log --oneline --decorate --graph --all --color`
         all_commits = `git log  --all --format=format:%H`.split("\n").map{|a| a.slice(0,7)}
 
+        @cli_graph = Ansispan.convert(@cli_graph)
         all_commits.each do |sha|
           sha_button = "<span class=\"commit\"><button class=\"btn btn-link sha\">#{sha}</button></span>"
           @cli_graph.gsub!(sha, sha_button)

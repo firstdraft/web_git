@@ -11,9 +11,10 @@ group :development do
   gem "juwelier", "~> 2.1.0"
 end
 
-gem 'sinatra'
-gem "git"
-gem "diffy"
 gem "actionview"
+gem "ansispan"
+gem "diffy"
+gem "git"
+gem 'sinatra'
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
