@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0".freeze) if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib".freeze]
   s.authors = ["Raghu Betina".freeze, "Jelani Woods".freeze]
-  s.date = "2020-06-19"
+  s.date = "2020-07-01"
   s.description = "WebGit is a Rails Engine that provides an in-browser visual interface to a simple but effective Git workflow. For educational purposes.".freeze
   s.email = "raghu@firstdraft.com".freeze
   s.extra_rdoc_files = [
@@ -51,10 +51,12 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<diffy>.freeze, [">= 0"])
       s.add_runtime_dependency(%q<actionview>.freeze, [">= 0"])
       s.add_runtime_dependency(%q<tzinfo-data>.freeze, [">= 0"])
+      s.add_runtime_dependency(%q<ansispan>.freeze, [">= 0"])
       s.add_development_dependency(%q<rspec>.freeze, ["~> 3.5.0"])
       s.add_development_dependency(%q<rdoc>.freeze, ["~> 3.12"])
       s.add_development_dependency(%q<juwelier>.freeze, ["~> 2.1.0"])
     else
+      s.add_dependency(%q<ansispan>.freeze, [">= 0"])
       s.add_dependency(%q<sinatra>.freeze, [">= 0"])
       s.add_dependency(%q<git>.freeze, [">= 0"])
       s.add_dependency(%q<diffy>.freeze, [">= 0"])
@@ -65,6 +67,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<juwelier>.freeze, ["~> 2.1.0"])
     end
   else
+    s.add_dependency(%q<ansispan>.freeze, [">= 0"])
     s.add_dependency(%q<sinatra>.freeze, [">= 0"])
     s.add_dependency(%q<git>.freeze, [">= 0"])
     s.add_dependency(%q<diffy>.freeze, [">= 0"])

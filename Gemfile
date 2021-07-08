@@ -6,14 +6,15 @@ source "https://rubygems.org"
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
 group :development do
-  gem "rspec", "~> 3.5.0"
-  gem "rdoc", "~> 3.12"
   gem "juwelier", "~> 2.1.0"
+  gem "rdoc", "~> 3.12"
+  gem "rspec", "~> 3.5.0"
 end
 
-gem 'sinatra'
-gem "git"
-gem "diffy"
 gem "actionview"
+gem "ansispan"
+gem "diffy"
+gem "git"
+gem "sinatra"
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
