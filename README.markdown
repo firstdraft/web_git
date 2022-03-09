@@ -2,11 +2,10 @@
 
 An in-browser Git GUI for your Rails project.
 
-WebGit is a Rails Engine that provides an in-browser visual interface to a simple but effective Git workflow. For educational purposes.
+WebGit is an embeddable Sinatra app that provides an in-browser visual interface to a simple but effective Git workflow. For educational purposes.
 
 ## Installation
 
-```
 
 Add this line to your application's Gemfile:
 
@@ -14,16 +13,18 @@ Add this line to your application's Gemfile:
 gem "web_git", git: "https://github.com/firstdraft/web_git"
 ```
 
-And then execute:
+And then execute the following command in a Terminal:
+
 ```bash
-$ bundle
+bundle install
 ```
 
 In the directory of your Rails app run:
+
 ```bash
-rails g web_git:install
+rails generate web_git:install
 ```
-Then `rails server` and visit `/git/status`.
+Then `rails server` and visit `/git`.
 
 ## Usage
 
