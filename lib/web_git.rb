@@ -36,7 +36,7 @@ module WebGit
       # Just need the file names
       @changed_files = status.changed.keys
       @deleted_files = status.added.keys
-      @untracked_files = status.untracked.keys
+      @untracked_files = untracked_files
       @added_files = status.deleted.keys
 
       @statuses = [
@@ -159,6 +159,11 @@ module WebGit
     def git
       working_dir = File.exist?(Dir.pwd + "/.git") ? Dir.pwd : Dir.pwd + "/.."
       @git ||= Git.open(working_dir)
+    end
+
+    # Temporary workaround for ruby-git bug
+    def untracked_files
+      `git --work-tree=#{git.dir} --git-dir=#{git.dir}/.git ls-files -o -z --full-name --exclude-standard`.split("\x0")
     end
 
     def safe_git_action(method, **options)
