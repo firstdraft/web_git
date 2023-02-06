@@ -71,7 +71,7 @@
         <a class="nav-link active" id="git-tab" href="#git">Git</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" id="heroku-tab" href="#heroku">Heroku</a>
+        <a class="nav-link <%= "disabled" if !heroku_authenticated? %>" id="heroku-tab" href="#heroku">Heroku</a>
       </li>
     </ul>
 
@@ -332,14 +332,14 @@
       <div class="tab-pane" id="heroku" role="tabpanel" aria-labelledby="home-tab">
         <ul class="list-group">
           <li class="list-group-item heroku text-white d-flex justify-content-between">
-            <% if @heroku_auth.empty? %>
+            <% if !heroku_authenticated? %>
               <span>Log in</span>
             <% else %>
               <span>Logged in as:</span>
               <span><%= @heroku_auth %></span>
             <% end %>
           </li>
-          <% if @heroku_auth.empty? %>
+          <% if !heroku_authenticated? %>
             <div class="border border-heroku p-4">
               <form action="/git/heroku/login" method="post">
                 <div class="form-group">
