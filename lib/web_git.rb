@@ -3,6 +3,7 @@ require "web_git/version"
 
 module WebGit
   require "active_support"
+  require "web_git/config"
   require "web_git/diff"
   require "web_git/graph"
   require "web_git/heroku"
@@ -77,7 +78,7 @@ module WebGit
       end
 
       # TODO heroku stuff
-      @heroku_auth = WebGit::Heroku.whoami
+      @heroku_auth = WebGit::Heroku.whoami if WebGit.heroku_enabled
       erb :status
     end
 
@@ -207,6 +208,10 @@ module WebGit
     def initialize_flash
       @alert = session[:alert]
       @notice = session[:notice]
+    end
+
+    def heroku_authenticated?
+      !@heroku_auth.nil? && !@heroku_auth.empty?
     end
   end
 end
