@@ -5,7 +5,7 @@ module WebGit
       filename = Rails.root.join("config.ru")
 
       log :insert, "Updating config.ru to run apps in parallel."
-      if File.exists?(filename) && already_installed?
+      if File.exist?(filename) && already_installed?
         log :identical, "Skipping overrides."
       else
         contents = <<~RUBY
